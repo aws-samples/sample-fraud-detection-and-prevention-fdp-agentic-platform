@@ -18,6 +18,8 @@ module "lambda" {
   s3_bucket     = var.fdp_backend_bucket[data.aws_region.this.name]
   s3_prefix     = format(data.terraform_remote_state.s3.outputs.prefix, var.r[count.index]["name"])
 
+  compatible_runtimes = ["python3.12", "python3.11", "python3.10"]
+
   source_path = {
     path             = var.r[count.index]["path"]
     pip_requirements = format("%s/%s", var.r[count.index]["path"], var.r[count.index]["file"])
