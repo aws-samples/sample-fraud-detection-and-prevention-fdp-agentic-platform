@@ -1,0 +1,2 @@
+skips:
+ - B101  # We don't compile Python code so our `assert`s won't be optimized out

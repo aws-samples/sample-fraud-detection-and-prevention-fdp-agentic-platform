@@ -1,0 +1,515 @@
+# Third-Party Software Licenses
+
+This document contains the licenses and notices for third-party software used
+in the Fraud Detection and Prevention (FDP) Agentic Platform.
+
+## Table of Contents
+
+1. [Python Dependencies](#python-dependencies)
+2. [JavaScript Dependencies](#javascript-dependencies)
+
+## Python Dependencies
+
+### Python
+- **Version**: 3.9
+- **Website**: https://www.python.org/
+- **License**: PSF License
+```
+Copyright © 2001-2022 Python Software Foundation; All Rights Reserved
+
+Copyright (C) 2006 by Rob Landley <rob@landley.net>
+
+Permission to use, copy, modify, and/or distribute this software for any purpose
+with or without fee is hereby granted.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
+OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
+THIS SOFTWARE.
+```
+
+### AWS SDK for Python (Boto3)
+- **Version**: 1.33.13
+- **Website**: https://github.com/boto/boto3/
+- **License**: Apache License 2.0
+```
+Copyright 2013-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0
+```
+
+### Botocore
+- **Version**: 1.34.42
+- **Website**: https://github.com/boto/botocore
+- **License**: Apache License 2.0
+```
+Copyright 2012-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0
+```
+
+### Requests
+- **Version**: 2.13.0
+- **Website**: https://github.com/psf/requests
+- **License**: Apache License 2.0
+```
+Copyright 2017 Kenneth Reitz
+
+Licensed under the Apache License, Version 2.0
+```
+
+### Python-dateutil
+- **Version**: 2.8.2
+- **Website**: https://github.com/dateutil/dateutil
+- **License**: Apache License 2.0
+```
+Copyright 2017- Paul Ganssle <paul@ganssle.io>
+Copyright 2017- dateutil contributors (see AUTHORS file)
+
+Licensed under the Apache License, Version 2.0
+```
+
+### S3transfer
+- **Version**: 0.7.0
+- **Website**: https://github.com/boto/s3transfer
+- **License**: Apache License 2.0
+```
+Copyright 2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0
+```
+
+### Transformers
+- **Version**: 4.37.1
+- **Website**: https://github.com/huggingface/transformers
+- **License**: Apache License 2.0
+```
+Copyright 2018- The Hugging Face team. All rights reserved.
+
+Licensed under the Apache License, Version 2.0
+```
+
+### Sentence-transformers
+- **Version**: 2.2.2
+- **Website**: https://github.com/UKPLab/sentence-transformers
+- **License**: Apache License 2.0
+```
+Copyright 2019 Nils Reimers
+
+Licensed under the Apache License, Version 2.0
+```
+
+### Kubernetes Client
+- **Version**: 17.17.0
+- **Website**: https://github.com/kubernetes-client/python
+- **License**: Apache License 2.0
+```
+Copyright 2014 The Kubernetes Authors.
+
+Licensed under the Apache License, Version 2.0
+```
+
+### Pandas
+- **Version**: 2.2.2
+- **Website**: https://github.com/pandas-dev/pandas
+- **License**: BSD 3-Clause License
+```
+Copyright (c) 2008-2011, AQR Capital Management, LLC, Lambda Foundry, Inc. and PyData Development Team
+Copyright (c) 2011-2023, Open source contributors.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice, this
+  list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of the copyright holder nor the names of its
+  contributors may be used to endorse or promote products derived from
+  this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+```
+
+### Python-dotenv
+- **Version**: 1.0.0
+- **Website**: https://github.com/theskumar/python-dotenv
+- **License**: BSD 3-Clause License
+```
+Copyright (c) 2014, Saurabh Kumar (python-dotenv), 2013, Ted Tieken (django-dotenv-rw), 2013, Jacob Kaplan-Moss (django-dotenv)
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+- Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+
+- Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+- Neither the name of django-dotenv nor the names of its contributors
+  may be used to endorse or promote products derived from this software
+  without specific prior written permission.
+```
+
+### NumPy
+- **Version**: 1.26.0
+- **Website**: https://github.com/numpy/numpy
+- **License**: BSD 3-Clause License
+```
+Copyright (c) 2005-2023, NumPy Developers.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+    * Redistributions of source code must retain the above copyright
+       notice, this list of conditions and the following disclaimer.
+
+    * Redistributions in binary form must reproduce the above
+       copyright notice, this list of conditions and the following
+       disclaimer in the documentation and/or other materials provided
+       with the distribution.
+
+    * Neither the name of the NumPy Developers nor the names of any
+       contributors may be used to endorse or promote products derived
+       from this software without specific prior written permission.
+```
+
+### Scikit-learn
+- **Version**: 1.1.3
+- **Website**: http://scikit-learn.org
+- **License**: BSD 3-Clause License
+```
+Copyright (c) 2007-2021 The scikit-learn developers.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice, this
+  list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of the copyright holder nor the names of its
+  contributors may be used to endorse or promote products derived from
+  this software without specific prior written permission.
+```
+
+### Six
+- **Version**: 1.16.0
+- **Website**: https://github.com/benjaminp/six
+- **License**: MIT License
+```
+Copyright (c) 2010-2020 Benjamin Peterson
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+```
+
+### urllib3
+- **Version**: 2.2.0
+- **Website**: https://github.com/urllib3/urllib3
+- **License**: MIT License
+```
+Copyright (c) 2008-2020 Andrey Petrov and contributors (see CONTRIBUTORS.txt)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+```
+
+### JMESPath
+- **Version**: 1.0.1
+- **Website**: https://pypi.org/project/jmespath/
+- **License**: MIT License
+```
+Copyright (c) 2013 Amazon.com, Inc. or its affiliates. All Rights Reserved
+
+Permission is hereby granted, free of charge, to any person obtaining a
+copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish, dis-
+tribute, sublicense, and/or sell copies of the Software, and to permit
+persons to whom the Software is furnished to do so, subject to the fol-
+lowing conditions:
+
+The above copyright notice and this permission notice shall be included
+in all copies or substantial portions of the Software.
+```
+
+## JavaScript Dependencies
+
+### AWS Amplify
+- **Version**: 6.14.2
+- **Website**: https://github.com/aws-amplify/amplify-js
+- **License**: Apache License 2.0
+```
+Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0
+```
+
+### AWS Amplify UI React
+- **Version**: 6.11.0
+- **Website**: https://github.com/aws-amplify/amplify-ui
+- **License**: Apache License 2.0
+```
+Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0
+```
+
+### React
+- **Version**: 19.1.0
+- **Website**: https://github.com/facebook/react
+- **License**: MIT License
+```
+Copyright (c) Facebook, Inc. and its affiliates.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+```
+
+### React DOM
+- **Version**: 19.1.0
+- **Website**: https://github.com/facebook/react
+- **License**: MIT License
+```
+Copyright (c) Facebook, Inc. and its affiliates.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+```
+
+### Material UI
+- **Version**: 6.4.1
+- **Website**: https://github.com/mui/material-ui
+- **License**: MIT License
+```
+The MIT License (MIT)
+
+Copyright (c) 2014 Call-Em-All
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+```
+
+### Material UI Icons
+- **Version**: 6.4.2
+- **Website**: https://github.com/mui/material-ui
+- **License**: MIT License
+```
+The MIT License (MIT)
+
+Copyright (c) 2014 Call-Em-All
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+```
+
+### Emotion
+- **Version**: 11.14.0
+- **Website**: https://github.com/emotion-js/emotion
+- **License**: MIT License
+```
+MIT License
+
+Copyright (c) Emotion team and other contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+```
+
+### React Markdown
+- **Version**: 9.0.3
+- **Website**: https://github.com/remarkjs/react-markdown
+- **License**: MIT License
+```
+The MIT License (MIT)
+
+Copyright (c) 2015 Espen Hovlandsdal
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+```
+
+### React Syntax Highlighter
+- **Version**: 15.6.1
+- **Website**: https://github.com/react-syntax-highlighter/react-syntax-highlighter
+- **License**: MIT License
+```
+MIT License
+
+Copyright (c) 2019 Conor Hastings
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+```
+
+### Framer Motion
+- **Version**: 12.4.2
+- **Website**: https://github.com/framer/motion
+- **License**: MIT License
+```
+The MIT License (MIT)
+
+Copyright (c) 2018 Framer B.V.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+```
+
+### Web Vitals
+- **Version**: 2.1.4
+- **Website**: https://github.com/GoogleChrome/web-vitals
+- **License**: Apache License 2.0
+```
+Copyright 2020 Google LLC
+
+Licensed under the Apache License, Version 2.0
+```
+
+### Webpack
+- **Version**: 5.97.1
+- **Website**: https://github.com/webpack/webpack
+- **License**: MIT License
+```
+Copyright JS Foundation and other contributors
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+'Software'), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+```
+
+### Babel
+- **Version**: 7.26.0
+- **Website**: https://github.com/babel/babel
+- **License**: MIT License
+```
+MIT License
+
+Copyright (c) 2014-present Sebastian McKenzie and other contributors
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+```
+
+## Apache License 2.0
+
+For all components licensed under the Apache License 2.0, the full license text can be found at:
+https://www.apache.org/licenses/LICENSE-2.0
+
+## MIT License
+
+For all components licensed under the MIT License, the full license text can be found at:
+https://opensource.org/licenses/MIT
+
+## BSD 3-Clause License
+
+For all components licensed under the BSD 3-Clause License, the full license text can be found at:
+https://opensource.org/licenses/BSD-3-Clause
