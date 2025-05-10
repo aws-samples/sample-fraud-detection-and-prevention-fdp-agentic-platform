@@ -118,6 +118,8 @@ resource "aws_secretsmanager_secret" "this" {
 resource "aws_secretsmanager_secret_version" "this" {
   secret_id = aws_secretsmanager_secret.this.id
   secret_string = jsonencode({
+    FDP_CLOUDFRONT_ID  = aws_cloudfront_distribution.this.id
     FDP_CLOUDFRONT_URL = aws_cloudfront_distribution.this.domain_name
+    FDP_WEBSITE        = data.terraform_remote_state.s3.outputs.id
   })
 }

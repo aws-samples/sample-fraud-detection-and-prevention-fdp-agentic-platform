@@ -18,19 +18,20 @@ help()
 {
   echo "Deploy cloud resource using AWS CLI, JQ, Terraform, and Terragrunt"
   echo
-  echo "Syntax: deploy.sh [-c|d|e|i|r|t]"
+  echo "Syntax: deploy.sh [-c|d|i|r|s|w]"
   echo "Options:"
   echo "c     Specify cleanup / destroy resources (e.g. true)"
   echo "d     Specify directory path (e.g. iac/api)"
   echo "i     Specify global id (e.g. abcd1234)"
   echo "r     Specify AWS region (e.g. us-east-1)"
   echo "s     Specify S3 bucket (e.g. fdp-backend-us-east-1)"
+  echo "w     Specify S3 website (e.g. fdp-website-us-east-1)"
   echo
 }
 
 set -o pipefail
 
-while getopts "h:c:d:i:r:s:" option; do
+while getopts "h:c:d:i:r:s:w:" option; do
   case $option in
     h)
       help
@@ -45,6 +46,8 @@ while getopts "h:c:d:i:r:s:" option; do
       FDP_REGION="$OPTARG";;
     s)
       FDP_BUCKET="$OPTARG";;
+    w)
+      FDP_WEBSITE="$OPTARG";;
     \?)
       echo "[ERROR] invalid option"
       echo
@@ -94,28 +97,40 @@ case ${FDP_DIR} in app/gui*)
   echo "[EXEC] npm install"
   npm install || { echo "[ERROR] npm install failed. aborting..."; cd -; exit 1; }
 
-  FDP_QUERY="SecretList[?starts_with(Name,\`fdp-api-secrets-${FDP_REGION}\`)].Name"
-  echo "[EXEC] aws secretsmanager list-secrets --region ${FDP_REGION} --query ${FDP_QUERY} --output text"
-  FDP_RESULT=$(aws secretsmanager list-secrets --region ${FDP_REGION} --query ${FDP_QUERY} --output text)
+  retrieve_secrets() {
+    local FDP_SECRET_PREFIX=$1
 
-  if [ "${FDP_RESULT}" != "" ]; then
-    echo "[EXEC] aws secretsmanager get-secret-value --region ${FDP_REGION} --secret-id ${FDP_RESULT} --query SecretString"
-    FDP_SECRET=$(aws secretsmanager get-secret-value --region ${FDP_REGION} --secret-id ${FDP_RESULT} --query SecretString)
+    FDP_QUERY="SecretList[?starts_with(Name,\`${FDP_SECRET_PREFIX}-${FDP_REGION}\`)].Name"
+    echo "[EXEC] aws secretsmanager list-secrets --region ${FDP_REGION} --query ${FDP_QUERY} --output text"
+    FDP_RESULT=$(aws secretsmanager list-secrets --region ${FDP_REGION} --query ${FDP_QUERY} --output text)
 
-    if [ -n "${FDP_DEBUG_SECRETS}" ] && [ "${FDP_DEBUG_SECRETS}" == "true" ]; then
-      echo "[DEBUG] echo ${FDP_SECRET}"
-      echo ${FDP_SECRET}
+    if [ "${FDP_RESULT}" != "" ]; then
+      echo "[EXEC] aws secretsmanager get-secret-value --region ${FDP_REGION} --secret-id ${FDP_RESULT} --query SecretString"
+      FDP_SECRET=$(aws secretsmanager get-secret-value --region ${FDP_REGION} --secret-id ${FDP_RESULT} --query SecretString)
+
+      if [ -n "${FDP_DEBUG_SECRETS}" ] && [ "${FDP_DEBUG_SECRETS}" == "true" ]; then
+        echo "[DEBUG] echo ${FDP_SECRET}"
+        echo ${FDP_SECRET}
+      fi
+
+      case ${FDP_SECRET} in \"{*)
+        FDP_SECRET=$(echo "${FDP_SECRET}" | jq -r '.')
+        for i in $(echo ${FDP_SECRET} | jq -r "to_entries|map(\"\(.key)=\(.value|tostring)\")|.[]" ); do
+          export ${i}
+          if [ -n "${FDP_DEBUG_SECRETS}" ] && [ "${FDP_DEBUG_SECRETS}" == "true" ]; then
+            echo "[DEBUG] export ${i}"
+          fi
+        done
+      esac
     fi
+  }
 
-    case ${FDP_SECRET} in \"{*)
-      FDP_SECRET=$(echo "${FDP_SECRET}" | jq -r '.')
-      for i in $(echo ${FDP_SECRET} | jq -r "to_entries|map(\"\(.key)=\(.value|tostring)\")|.[]" ); do
-        export ${i}
-        if [ -n "${FDP_DEBUG_SECRETS}" ] && [ "${FDP_DEBUG_SECRETS}" == "true" ]; then
-          echo "[DEBUG] export ${i}"
-        fi
-      done
-    esac
+  retrieve_secrets "fdp-api-secrets"
+  retrieve_secrets "fdp-gui-secrets"
+
+  if [ -z "${FDP_WEBSITE}" ]; then
+    echo "[DEBUG] FDP_WEBSITE: ${FDP_WEBSITE}"
+    echo "[ERROR] FDP_WEBSITE is missing..."; exit 1;
   fi
 
   FDP_CONFIG_FILE="${WORKDIR}/${FDP_DIR}/config.txt"
@@ -136,10 +151,10 @@ case ${FDP_DIR} in app/gui*)
   echo "[EXEC] npm run build"
   npm run build || { echo "[ERROR] npm run build failed. aborting..."; cd -; exit 1; }
 
-  echo "[EXEC] aws s3 sync --delete ${WORKDIR}/${FDP_DIR}/dist/ s3://${FDP_BUCKET}"
-  aws s3 sync --delete ${WORKDIR}/${FDP_DIR}/dist/ s3://${FDP_BUCKET} || { echo "[ERROR] aws s3 sync failed. aborting..."; cd -; exit 1; }
+  echo "[EXEC] aws s3 sync --delete ${WORKDIR}/${FDP_DIR}/dist/ s3://${FDP_WEBSITE}"
+  aws s3 sync --delete ${WORKDIR}/${FDP_DIR}/dist/ s3://${FDP_WEBSITE} || { echo "[ERROR] aws s3 sync failed. aborting..."; cd -; exit 1; }
 
-  FDP_QUERY="DistributionList.Items[*].{id:Id,origin:Origins.Items[0].Id}[?starts_with(origin,\`${FDP_BUCKET}\`)].id"
+  FDP_QUERY="DistributionList.Items[*].{id:Id,origin:Origins.Items[0].Id}[?starts_with(origin,\`${FDP_WEBSITE}\`)].id"
   echo "[EXEC] aws cloudfront list-distributions --region ${FDP_REGION} --query ${FDP_QUERY} --output text"
   FDP_RESULT=$(aws cloudfront list-distributions --region ${FDP_REGION} --query ${FDP_QUERY} --output text)
 
