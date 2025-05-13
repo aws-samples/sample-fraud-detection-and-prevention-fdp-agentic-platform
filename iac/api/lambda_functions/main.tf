@@ -26,14 +26,14 @@ module "lambda" {
   }
 
   create_role        = true
-  attach_policies    = true
-  attach_policy_json = true
-  number_of_policies = length(local.iam_policies_arns)
-  policies           = local.iam_policies_arns
-  policy_json        = data.aws_iam_policy_document.this.json
   role_name          = format("%s-role-%s-%s", var.r[count.index]["name"], data.aws_region.this.name, local.fdp_gid)
   role_path          = "/service-role/"
   policy_path        = "/service-role/"
+  attach_policies    = true
+  number_of_policies = length(local.iam_policies_arns)
+  policies           = local.iam_policies_arns
+  attach_policy_json = true
+  policy_json        = data.aws_iam_policy_document.this.json
 
   attach_cloudwatch_logs_policy     = true
   attach_dead_letter_policy         = true
