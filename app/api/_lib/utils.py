@@ -4,6 +4,7 @@
 # lib/utils.py
 import re
 import logging
+import json
 
 logger = logging.getLogger(__name__)
 

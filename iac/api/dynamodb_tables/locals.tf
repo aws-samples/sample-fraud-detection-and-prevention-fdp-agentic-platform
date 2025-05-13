@@ -16,9 +16,9 @@ locals {
       name = "pk"
       type = "S"
     },
-    {
-      name = "sk"
-      type = "S"
-    },
+    # {
+    #   name = "sk"
+    #   type = "S"
+    # },
   ]
 }

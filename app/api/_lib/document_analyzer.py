@@ -110,7 +110,7 @@ class DocumentAnalyzer:
         document_type = extract_document_type(content_text)
 
         verification_data = {
-            'id': str(uuid.uuid4()),
+            'pk': str(uuid.uuid4()),
             'document_type': document_type,
             'confidence': Decimal(str(confidence_score)),
             'content_text': content_text,
@@ -122,7 +122,7 @@ class DocumentAnalyzer:
         preview_url = self.s3_service.get_presigned_url(file_key)
 
         return {
-            'id': saved_verification['id'],
+            'pk': saved_verification['pk'],
             'timestamp': saved_verification['timestamp'],
             'document_type': document_type,
             'confidence': float(saved_verification['confidence']),
