@@ -3,7 +3,7 @@
 
 q = {
   hash_key     = "pk"
-  range_key    = "sk"
+  range_key    = null # "sk"
   billing_mode = "PAY_PER_REQUEST"
 
   stream_enabled         = true
