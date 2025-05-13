@@ -33,12 +33,12 @@ r = [{
   desc = "FDP LAMBDA CONFIG"
   path = "../../../app/api/configuration-manager"
   file = "lib/requirements.txt"
-  }, {
-  key  = "flow"
-  name = "fdp-lambda-flow"
-  desc = "FDP LAMBDA FLOW"
-  path = "../../../app/api/flow-manager"
-  file = "requirements.txt"
+  # }, {
+  # key  = "flow"
+  # name = "fdp-lambda-flow"
+  # desc = "FDP LAMBDA FLOW"
+  # path = "../../../app/api/flow-manager"
+  # file = "requirements.txt"
   }, {
   key  = "prompt"
   name = "fdp-lambda-prompt"
