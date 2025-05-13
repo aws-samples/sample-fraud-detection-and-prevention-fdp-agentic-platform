@@ -11,7 +11,7 @@ class DocumentAnalysisRequest(BaseModel):
     model_type: str = 'LITE'
 
 class DocumentAnalysisResponse(BaseModel):
-    id: str
+    pk: str
     timestamp: str
     document_type: str
     confidence: float
@@ -26,7 +26,7 @@ class DocumentAnalysisResponse(BaseModel):
         arbitrary_types_allowed = True
 
 class Prompt(BaseModel):
-    id: Optional[str] = None
+    pk: Optional[str] = None
     role: str
     tasks: str
     is_active: bool = False
@@ -34,7 +34,7 @@ class Prompt(BaseModel):
     updated_at: Optional[str] = None
 
 class Configuration(BaseModel):
-    id: str
+    pk: str
     key: str
     value: str
     description: Optional[str] = None

@@ -23,6 +23,8 @@ locals {
   }
   iam_policies_arns = [
     "arn:${data.aws_partition.this.partition}:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole",
-    "arn:${data.aws_partition.this.partition}:iam::aws:policy/AmazonS3ReadOnlyAccess",
+    # "arn:${data.aws_partition.this.partition}:iam::aws:policy/AmazonS3ReadOnlyAccess",
+    # "arn:${data.aws_partition.this.partition}:iam::aws:policy/AmazonDynamoDBReadOnlyAccess",
+    data.aws_iam_policy_document.this.arn,
   ]
 }

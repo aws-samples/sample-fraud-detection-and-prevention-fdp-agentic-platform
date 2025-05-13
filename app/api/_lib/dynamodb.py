@@ -55,24 +55,24 @@ class DynamoDBService:
                     TableName=self.agent_table_name,
                     KeySchema=[
                         {
-                            'AttributeName': 'id',
+                            'AttributeName': 'pk',
                             'KeyType': 'HASH'  # Partition key
                         }
                     ],
                     AttributeDefinitions=[
                         {
-                            'AttributeName': 'id',
+                            'AttributeName': 'pk',
                             'AttributeType': 'S'
                         }
                     ],
                     BillingMode='PAY_PER_REQUEST'  # On-demand capacity mode
                 )
-                
+
                 table.meta.client.get_waiter('table_exists').wait(TableName=self.agent_table_name)
                 logger.info(f"Table created successfully: {self.agent_table_name}")
                 return table
             else:
-                logger.error(f"Error checking/creating table: {str(e)}")
+                logger.error(f"Error checking/creating table: {repr(e)}")
                 raise
 
     def ensure_prompts_table_exists(self):
@@ -89,24 +89,24 @@ class DynamoDBService:
                     TableName=self.prompts_table_name,
                     KeySchema=[
                         {
-                            'AttributeName': 'id',
+                            'AttributeName': 'pk',
                             'KeyType': 'HASH'  # Partition key
                         }
                     ],
                     AttributeDefinitions=[
                         {
-                            'AttributeName': 'id',
+                            'AttributeName': 'pk',
                             'AttributeType': 'S'
                         }
                     ],
                     BillingMode='PAY_PER_REQUEST'  # On-demand capacity mode
                 )
-                
+
                 table.meta.client.get_waiter('table_exists').wait(TableName=self.prompts_table_name)
                 logger.info(f"Prompts table created successfully: {self.prompts_table_name}")
                 return table
             else:
-                logger.error(f"Error checking/creating prompts table: {str(e)}")
+                logger.error(f"Error checking/creating prompts table: {repr(e)}")
                 raise
 
     def ensure_configs_table_exists(self):
@@ -123,7 +123,7 @@ class DynamoDBService:
                     TableName=self.configs_table_name,
                     KeySchema=[
                         {
-                            'AttributeName': 'id',
+                            'AttributeName': 'pk',
                             'KeyType': 'HASH'  # Partition key
                         },
                         {
@@ -133,25 +133,21 @@ class DynamoDBService:
                     ],
                     AttributeDefinitions=[
                         {
-                            'AttributeName': 'id',
-                            'AttributeType': 'S'
-                        },
-                        {
-                            'AttributeName': 'key',
+                            'AttributeName': 'pk',
                             'AttributeType': 'S'
                         }
                     ],
                     BillingMode='PAY_PER_REQUEST'  # On-demand capacity mode
                 )
-                
+
                 table.meta.client.get_waiter('table_exists').wait(TableName=self.configs_table_name)
                 logger.info(f"Configs table created successfully: {self.configs_table_name}")
-                
+
                 # Initialize with default values
                 self.initialize_default_configs()
                 return table
             else:
-                logger.error(f"Error checking/creating configs table: {str(e)}")
+                logger.error(f"Error checking/creating configs table: {repr(e)}")
                 raise
 
     def initialize_default_configs(self):
@@ -160,56 +156,56 @@ class DynamoDBService:
             # Model IDs configurations
             model_configs = [
                 {
-                    'id': 'MODEL_IDS',
+                    'pk': 'MODEL_IDS',
                     'key': 'MICRO',
                     'value': 'amazon.nova-micro-v1:0',
                     'description': 'Micro Model ID',
                     'is_active': False
                 },
                 {
-                    'id': 'MODEL_IDS',
+                    'pk': 'MODEL_IDS',
                     'key': 'LITE',
                     'value': 'amazon.nova-lite-v1:0',
                     'description': 'Lite Model ID',
                     'is_active': True
                 },
                 {
-                    'id': 'MODEL_IDS',
+                    'pk': 'MODEL_IDS',
                     'key': 'PRO',
                     'value': 'amazon.nova-pro-v1:0',
                     'description': 'Pro Model ID',
                     'is_active': False
                 }
             ]
-            
+
             # Inference parameters configurations
             inference_configs = [
                 {
-                    'id': 'INFERENCE_PARAMS',
+                    'pk': 'INFERENCE_PARAMS',
                     'key': 'max_new_tokens',
                     'value': '3000',
                     'description': 'Maximum number of new tokens'
                 },
                 {
-                    'id': 'INFERENCE_PARAMS',
+                    'pk': 'INFERENCE_PARAMS',
                     'key': 'top_p',
                     'value': '0.1',
                     'description': 'Top P value'
                 },
                 {
-                    'id': 'INFERENCE_PARAMS',
+                    'pk': 'INFERENCE_PARAMS',
                     'key': 'top_k',
                     'value': '20',
                     'description': 'Top K value'
                 },
                 {
-                    'id': 'INFERENCE_PARAMS',
+                    'pk': 'INFERENCE_PARAMS',
                     'key': 'temperature',
                     'value': '0.3',
                     'description': 'Temperature value'
                 }
             ]
-            
+
             # Write all configurations to the table using batch writer
             current_time = datetime.now(timezone.utc).isoformat()
             with self.configs_table.batch_writer() as batch:
@@ -217,10 +213,10 @@ class DynamoDBService:
                     config['created_at'] = current_time
                     config['updated_at'] = current_time
                     batch.put_item(Item=config)
-                    
+
             logger.info("Default configurations initialized successfully")
         except Exception as e:
-            logger.error(f"Error initializing default configurations: {str(e)}")
+            logger.error(f"Error initializing default configurations: {repr(e)}")
             raise
 
     async def save_verification(self, verification_data: Dict) -> Dict:
@@ -228,13 +224,13 @@ class DynamoDBService:
         try:
             aware_datetime = datetime.now(timezone.utc)
             timestamp = aware_datetime.isoformat()
-            
+
             # Convert confidence to Decimal for DynamoDB
             confidence = Decimal(str(verification_data.get('confidence', 0)))
 
             # Create item for DynamoDB
             item = {
-                'id': verification_data.get('id'),
+                'pk': verification_data.get('id'),
                 'timestamp': timestamp,
                 'document_type': verification_data.get('document_type'),
                 'confidence': confidence,
@@ -249,20 +245,20 @@ class DynamoDBService:
 
             # Save to DynamoDB
             self.verifications_table.put_item(Item=item)
-            
+
             # Process item for response
             response_item = item.copy()
             response_item['confidence'] = float(response_item['confidence'])
-            
+
             # Generate a fresh presigned URL if file exists
             if response_item.get('file_key'):
                 response_item['preview_url'] = self.s3_service.get_presigned_url(response_item['file_key'])
-            
-            logger.info(f"Successfully saved verification: {response_item['id']}")
+
+            logger.info(f"Successfully saved verification: {response_item['pk']}")
             return response_item
-                
+
         except Exception as e:
-            logger.error(f"Error saving verification: {str(e)}")
+            logger.error(f"Error saving verification: {repr(e)}")
             raise
 
     async def get_verifications(self) -> List[Dict]:
@@ -271,23 +267,23 @@ class DynamoDBService:
             logger.info(f"Scanning table: {self.agent_table_name}")
             items = []
             last_evaluated_key = None
-            
+
             while True:
                 scan_kwargs = {}
                 if last_evaluated_key:
                     scan_kwargs['ExclusiveStartKey'] = last_evaluated_key
-                
+
                 response = self.verifications_table.scan(**scan_kwargs)
                 items.extend(response.get('Items', []))
-                
+
                 last_evaluated_key = response.get('LastEvaluatedKey')
                 if not last_evaluated_key:
                     break
-            
+
             processed_items = []
             for item in items:
                 processed_item = {
-                    'id': item.get('id'),
+                    'pk': item.get('id'),
                     'timestamp': item.get('timestamp'),
                     'document_type': item.get('document_type'),
                     'confidence': float(item.get('confidence', 0)),
@@ -295,22 +291,22 @@ class DynamoDBService:
                     'file_key': item.get('file_key'),
                     'preview_url': None
                 }
-                
+
                 if processed_item['file_key']:
                     try:
                         processed_item['preview_url'] = self.s3_service.get_presigned_url(
                             processed_item['file_key']
                         )
                     except Exception as e:
-                        logger.error(f"Error generating preview URL: {e}")
-                
+                        logger.error(f"Error generating preview URL: {repr(e)}")
+
                 processed_items.append(processed_item)
             
             logger.info(f"Processed {len(processed_items)} verifications")
             return processed_items
-            
+
         except Exception as e:
-            logger.error(f"Error in get_verifications: {e}", exc_info=True)
+            logger.error(f"Error in get_verifications: {repr(e)}", exc_info=True)
             raise
 
     async def _deactivate_other_prompts(self, current_prompt_id: Optional[str] = None):
@@ -320,18 +316,18 @@ class DynamoDBService:
                 FilterExpression='is_active = :true',
                 ExpressionAttributeValues={':true': True}
             )
-            
+
             current_time = datetime.now(timezone.utc).isoformat()
             with self.prompts_table.batch_writer() as batch:
                 for prompt in response.get('Items', []):
-                    if prompt['id'] != current_prompt_id:
+                    if prompt['pk'] != current_prompt_id:
                         prompt['is_active'] = False
                         prompt['updated_at'] = current_time
                         batch.put_item(Item=prompt)
-                        
-            logger.info(f"Successfully deactivated other prompts except {current_prompt_id}")
+
+            logger.info(f"Successfully deactivated other prompts except {repr(current_prompt_id)}")
         except Exception as e:
-            logger.error(f"Error deactivating prompts: {str(e)}")
+            logger.error(f"Error deactivating prompts: {repr(e)}")
             raise
 
     async def get_prompts(self) -> List[Dict]:
@@ -340,23 +336,23 @@ class DynamoDBService:
             logger.info(f"Scanning prompts table: {self.prompts_table_name}")
             items = []
             last_evaluated_key = None
-            
+
             while True:
                 scan_kwargs = {}
                 if last_evaluated_key:
                     scan_kwargs['ExclusiveStartKey'] = last_evaluated_key
-                
+
                 response = self.prompts_table.scan(**scan_kwargs)
                 items.extend(response.get('Items', []))
-                
+
                 last_evaluated_key = response.get('LastEvaluatedKey')
                 if not last_evaluated_key:
                     break
-            
+
             logger.info(f"Retrieved {len(items)} prompts")
             return items
         except Exception as e:
-            logger.error(f"Error getting prompts: {str(e)}")
+            logger.error(f"Error getting prompts: {repr(e)}")
             raise
 
     async def save_prompt(self, prompt: Dict) -> Dict:
@@ -364,7 +360,7 @@ class DynamoDBService:
         try:
             current_time = datetime.now(timezone.utc).isoformat()
             item = {
-                'id': str(uuid.uuid4()),
+                'pk': str(uuid.uuid4()),
                 'role': prompt.role,
                 'tasks': prompt.tasks,
                 'is_active': prompt.is_active,
@@ -374,21 +370,21 @@ class DynamoDBService:
 
             # If this prompt is being set as active, deactivate others first
             if prompt.is_active:
-                await self._deactivate_other_prompts(item['id'])
+                await self._deactivate_other_prompts(item['pk'])
 
-            logger.info(f"Saving new prompt with id: {item['id']}")
+            logger.info(f"Saving new prompt with id: {item['pk']}")
             self.prompts_table.put_item(
                 Item=item,
-                ConditionExpression='attribute_not_exists(id)'
+                ConditionExpression='attribute_not_exists(pk)'
             )
             return item
         except ClientError as e:
             if e.response['Error']['Code'] == 'ConditionalCheckFailedException':
                 raise ValueError("Prompt ID already exists")
-            logger.error(f"Error saving prompt: {str(e)}")
+            logger.error(f"Error saving prompt: {repr(e)}")
             raise
         except Exception as e:
-            logger.error(f"Error saving prompt: {str(e)}")
+            logger.error(f"Error saving prompt: {repr(e)}")
             raise
 
     async def update_prompt(self, prompt: Dict) -> Dict:
@@ -396,7 +392,7 @@ class DynamoDBService:
         try:
             timestamp = datetime.now(timezone.utc).isoformat()
             item = {
-                'id': prompt.id,  
+                'pk': prompt.pk,  
                 'role': prompt.role,
                 'tasks': prompt.tasks,
                 'is_active': prompt.is_active,
@@ -405,12 +401,12 @@ class DynamoDBService:
             }
 
             if prompt.is_active:
-                await self._deactivate_other_prompts(prompt.id)
-            
-            logger.info(f"Updating prompt with id: {item['id']}")
+                await self._deactivate_other_prompts(prompt.pk)
+
+            logger.info(f"Updating prompt with id: {item['pk']}")
             self.prompts_table.put_item(
                 Item=item,
-                ConditionExpression='attribute_exists(id) AND updated_at = :old_timestamp',
+                ConditionExpression='attribute_exists(pk) AND updated_at = :old_timestamp',
                 ExpressionAttributeValues={
                     ':old_timestamp': prompt.updated_at
                 }
@@ -419,27 +415,27 @@ class DynamoDBService:
         except ClientError as e:
             if e.response['Error']['Code'] == 'ConditionalCheckFailedException':
                 raise ValueError("Prompt was updated by another process")
-            logger.error(f"Error updating prompt: {str(e)}")
+            logger.error(f"Error updating prompt: {repr(e)}")
             raise
         except Exception as e:
-            logger.error(f"Error updating prompt: {str(e)}")
+            logger.error(f"Error updating prompt: {repr(e)}")
             raise
 
     async def delete_prompt(self, prompt_id: str):
         """Delete a prompt with validation"""
         try:
-            logger.info(f"Deleting prompt with id: {prompt_id}")
+            logger.info(f"Deleting prompt with id: {repr(prompt_id)}")
             self.prompts_table.delete_item(
-                Key={'id': prompt_id},
-                ConditionExpression='attribute_exists(id)'
+                Key={'pk': prompt_id},
+                ConditionExpression='attribute_exists(pk)'
             )
         except ClientError as e:
             if e.response['Error']['Code'] == 'ConditionalCheckFailedException':
                 raise ValueError("Prompt does not exist")
-            logger.error(f"Error deleting prompt: {str(e)}")
+            logger.error(f"Error deleting prompt: {repr(e)}")
             raise
         except Exception as e:
-            logger.error(f"Error deleting prompt: {str(e)}")
+            logger.error(f"Error deleting prompt: {repr(e)}")
             raise
 
     @lru_cache(maxsize=1)
@@ -450,7 +446,7 @@ class DynamoDBService:
                 FilterExpression='is_active = :true',
                 ExpressionAttributeValues={':true': True}
             )
-            
+
             items = response.get('Items', [])
             if not items:
                 logger.warning("No active prompt found")
@@ -458,22 +454,22 @@ class DynamoDBService:
             
             if len(items) > 1:
                 logger.warning("Multiple active prompts found, using the first one")
-            
+
             return items[0]
         except Exception as e:
-            logger.error(f"Error getting active prompt: {str(e)}")
+            logger.error(f"Error getting active prompt: {repr(e)}")
             raise
 
     async def get_configurations(self, config_id: str):
         """Get all configurations for a specific ID with error handling"""
         try:
             response = self.configs_table.query(
-                KeyConditionExpression='id = :id',
-                ExpressionAttributeValues={':id': config_id}
+                KeyConditionExpression='pk = :pk',
+                ExpressionAttributeValues={':pk': config_id}
             )
             return response.get('Items', [])
         except Exception as e:
-            logger.error(f"Error getting configurations: {str(e)}")
+            logger.error(f"Error getting configurations: {repr(e)}")
             raise
 
     async def update_configuration(self, config: Configuration):
@@ -482,13 +478,13 @@ class DynamoDBService:
             config_dict = config.dict()
             current_time = datetime.now(timezone.utc).isoformat()
             config_dict['updated_at'] = current_time
-            
+
             condition_expression = (
-                'attribute_not_exists(id) OR '
+                'attribute_not_exists(pk) OR '
                 'attribute_not_exists(updated_at) OR '
                 'updated_at = :old_timestamp'
             )
-            
+
             self.configs_table.put_item(
                 Item=config_dict,
                 ConditionExpression=condition_expression,
@@ -500,10 +496,10 @@ class DynamoDBService:
         except ClientError as e:
             if e.response['Error']['Code'] == 'ConditionalCheckFailedException':
                 raise ValueError("Configuration was updated by another process")
-            logger.error(f"Error updating configuration: {str(e)}")
+            logger.error(f"Error updating configuration: {repr(e)}")
             raise
         except Exception as e:
-            logger.error(f"Error updating configuration: {str(e)}")
+            logger.error(f"Error updating configuration: {repr(e)}")
             raise
 
     @lru_cache(maxsize=1)
@@ -511,30 +507,30 @@ class DynamoDBService:
         """Get the currently active model configuration with caching"""
         try:
             response = self.configs_table.query(
-                KeyConditionExpression='id = :id',
+                KeyConditionExpression='pk = :pk',
                 FilterExpression='is_active = :true',
                 ExpressionAttributeValues={
-                    ':id': 'MODEL_IDS',
+                    ':pk': 'MODEL_IDS',
                     ':true': True
                 }
             )
-            
+
             items = response.get('Items', [])
             if not items:
                 # If no active model, return the LITE model as default
                 response = self.configs_table.query(
-                    KeyConditionExpression='id = :id AND #key = :key',
+                    KeyConditionExpression='pk = :pk AND #key = :key',
                     ExpressionAttributeNames={'#key': 'key'},
                     ExpressionAttributeValues={
-                        ':id': 'MODEL_IDS',
+                        ':pk': 'MODEL_IDS',
                         ':key': 'LITE'
                     }
                 )
                 return response['Items'][0] if response['Items'] else None
-                
+
             return items[0]
         except Exception as e:
-            logger.error(f"Error getting active model config: {str(e)}")
+            logger.error(f"Error getting active model config: {repr(e)}")
             raise
 
     def clear_caches(self):

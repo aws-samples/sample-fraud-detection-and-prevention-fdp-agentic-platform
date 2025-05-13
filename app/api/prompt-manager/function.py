@@ -10,6 +10,8 @@ from lib.utils import create_api_response
 from lib.dynamodb import DynamoDBService
 from lib.models import Prompt
 from lib.prompt_manager import PromptManager
+import asyncio
+
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -127,14 +129,21 @@ def handler(event, context):
     http_method = event['httpMethod']
     path = event['path']
 
-    # Route requests to appropriate handler
-    if http_method == 'GET' and path.startswith('/prompts'):
-        return get_prompts(event, context)
-    if http_method == 'POST' and path.startswith('/prompts'):
-        return create_prompt(event, context)
-    if http_method == 'PUT' and path.startswith('/prompts'):
-        return update_prompt(event, context)
-    if http_method == 'DELETE' and path.startswith('/prompts'):
-        return delete_prompt(event, context)
+    # Create an event loop
+    loop = asyncio.get_event_loop()
 
-    return create_api_response(404, {'detail': 'Not Found'})
+    try:
+        # Route requests to appropriate handler
+        if http_method == 'GET' and path.startswith('/prompts'):
+            return loop.run_until_complete(get_prompts(event, context))
+        if http_method == 'POST' and path.startswith('/prompts'):
+            return loop.run_until_complete(create_prompt(event, context))
+        if http_method == 'PUT' and path.startswith('/prompts'):
+            return loop.run_until_complete(update_prompt(event, context))
+        if http_method == 'DELETE' and path.startswith('/prompts'):
+            return loop.run_until_complete(delete_prompt(event, context))
+
+        return create_api_response(404, {'detail': 'Not Found'})
+    except Exception as e:
+        LOGGER.error("Error processing request: %s", str(e))
+        return create_api_response(500, {'detail': str(e)})

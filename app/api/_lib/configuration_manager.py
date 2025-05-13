@@ -27,7 +27,7 @@ class ConfigurationManager:
         """Update configuration"""
         try:
             # Validate configuration exists
-            existing_configs = await self.db_service.get_configurations(config_data['id'])
+            existing_configs = await self.db_service.get_configurations(config_data['pk'])
             existing_config = next(
                 (c for c in existing_configs if c['key'] == config_data['key']),
                 None
@@ -43,7 +43,7 @@ class ConfigurationManager:
             # If this config is being set as active, handle activation logic
             if config_data.get('is_active'):
                 await self._handle_config_activation(
-                    config_data['id'],
+                    config_data['pk'],
                     config_data['key']
                 )
 
@@ -61,7 +61,7 @@ class ConfigurationManager:
             # If this config is being set as active, handle activation logic
             if config_data.get('is_active'):
                 await self._handle_config_activation(
-                    config_data['id'],
+                    config_data['pk'],
                     config_data['key']
                 )
 

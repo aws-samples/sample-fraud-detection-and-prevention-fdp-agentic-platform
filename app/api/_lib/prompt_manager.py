@@ -24,7 +24,7 @@ class PromptManager:
         """Create a new prompt"""
         try:
             # Add metadata
-            prompt_data['id'] = str(uuid.uuid4())
+            prompt_data['pk'] = str(uuid.uuid4())
             prompt_data['created_at'] = datetime.now(timezone.utc).isoformat()
 
             # If this prompt is being set as active, deactivate others
@@ -45,7 +45,7 @@ class PromptManager:
                 raise ValueError(f"Prompt with id {prompt_id} not found")
 
             # Update metadata
-            prompt_data['id'] = prompt_id
+            prompt_data['pk'] = prompt_id
             prompt_data['updated_at'] = datetime.now(timezone.utc).isoformat()
             prompt_data['created_at'] = existing_prompt.get('created_at')
 
@@ -91,7 +91,7 @@ class PromptManager:
         try:
             prompts = await self.db_service.get_prompts()
             for prompt in prompts:
-                if prompt.get('is_active') and prompt.get('id') != exclude_id:
+                if prompt.get('is_active') and prompt.get('pk') != exclude_id:
                     prompt['is_active'] = False
                     prompt['updated_at'] = datetime.now(timezone.utc).isoformat()
                     await self.db_service.update_prompt(prompt)

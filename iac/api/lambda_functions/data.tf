@@ -67,6 +67,45 @@ data "terraform_remote_state" "vpc" {
   }
 }
 
+data "aws_iam_policy_document" "this" {
+  statement {
+    effect  = "Allow"
+    actions = [
+      "dynamodb:CreateTable",
+      "dynamodb:DescribeTable",
+      "dynamodb:GetItem",
+      "dynamodb:PutItem",
+      "dynamodb:UpdateItem",
+      "dynamodb:DeleteItem",
+      "dynamodb:Scan",
+      "dynamodb:Query",
+      "dynamodb:BatchWriteItem",
+    ]
+    resources = [
+      lookup(data.terraform_remote_state.dynamodb.outputs.arn, "agent", null),
+      lookup(data.terraform_remote_state.dynamodb.outputs.arn, "config", null),
+      lookup(data.terraform_remote_state.dynamodb.outputs.arn, "prompt", null),
+    ]
+  }
+
+  statement {
+    effect  = "Allow"
+    actions = [
+      "s3:GetObject",
+      "s3:PutObject",
+      "s3:ListBucket",
+      "s3:CreateBucket",
+      "s3:HeadBucket",
+      "s3:PutBucketEncryption",
+      "s3:PutBucketVersioning",
+    ]
+    resources = [
+      data.terraform_remote_state.s3.outputs.bucket_arn,
+      "${data.terraform_remote_state.s3.outputs.bucket_arn}/*",
+    ]
+  }
+}
+
 data "aws_secretsmanager_secret" "this" {
   name = data.terraform_remote_state.cognito.outputs.secret_name
 }
