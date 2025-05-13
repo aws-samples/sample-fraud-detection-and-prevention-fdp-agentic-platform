@@ -27,7 +27,9 @@ module "lambda" {
 
   create_role        = true
   attach_policies    = true
+  attach_policy_json = true
   number_of_policies = length(local.iam_policies_arns)
+  policy_json        = data.aws_iam_policy_document.this.json
   policies           = local.iam_policies_arns
   role_name          = format("%s-role-%s-%s", var.r[count.index]["name"], data.aws_region.this.name, local.fdp_gid)
   role_path          = "/service-role/"
