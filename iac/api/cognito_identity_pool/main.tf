@@ -27,6 +27,7 @@ resource "aws_secretsmanager_secret" "this" {
   description = var.q.description
 
   force_overwrite_replica_secret = true
+  recovery_window_in_days        = 0
 
   dynamic "replica" {
     for_each = local.replicas
