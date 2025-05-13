@@ -100,8 +100,8 @@ data "aws_iam_policy_document" "this" {
       "s3:PutBucketVersioning",
     ]
     resources = [
-      data.terraform_remote_state.s3.outputs.bucket_arn,
-      "${data.terraform_remote_state.s3.outputs.bucket_arn}/*",
+      data.terraform_remote_state.s3.outputs.arn,
+      "${data.terraform_remote_state.s3.outputs.arn}/*",
     ]
   }
 }
