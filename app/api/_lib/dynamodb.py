@@ -56,7 +56,7 @@ class DynamoDBService:
                     KeySchema=[
                         {
                             'AttributeName': 'pk',
-                            'KeyType': 'HASH'  # Partition key
+                            'KeyType': 'HASH'
                         }
                     ],
                     AttributeDefinitions=[
@@ -65,7 +65,7 @@ class DynamoDBService:
                             'AttributeType': 'S'
                         }
                     ],
-                    BillingMode='PAY_PER_REQUEST'  # On-demand capacity mode
+                    BillingMode='PAY_PER_REQUEST'
                 )
 
                 table.meta.client.get_waiter('table_exists').wait(TableName=self.agent_table_name)
@@ -90,7 +90,7 @@ class DynamoDBService:
                     KeySchema=[
                         {
                             'AttributeName': 'pk',
-                            'KeyType': 'HASH'  # Partition key
+                            'KeyType': 'HASH'
                         }
                     ],
                     AttributeDefinitions=[
@@ -99,7 +99,7 @@ class DynamoDBService:
                             'AttributeType': 'S'
                         }
                     ],
-                    BillingMode='PAY_PER_REQUEST'  # On-demand capacity mode
+                    BillingMode='PAY_PER_REQUEST'
                 )
 
                 table.meta.client.get_waiter('table_exists').wait(TableName=self.prompts_table_name)
@@ -124,11 +124,11 @@ class DynamoDBService:
                     KeySchema=[
                         {
                             'AttributeName': 'pk',
-                            'KeyType': 'HASH'  # Partition key
+                            'KeyType': 'HASH'
                         },
                         {
                             'AttributeName': 'key',
-                            'KeyType': 'RANGE'  # Sort key
+                            'KeyType': 'RANGE'
                         }
                     ],
                     AttributeDefinitions=[
@@ -137,7 +137,7 @@ class DynamoDBService:
                             'AttributeType': 'S'
                         }
                     ],
-                    BillingMode='PAY_PER_REQUEST'  # On-demand capacity mode
+                    BillingMode='PAY_PER_REQUEST'
                 )
 
                 table.meta.client.get_waiter('table_exists').wait(TableName=self.configs_table_name)
@@ -361,15 +361,15 @@ class DynamoDBService:
             current_time = datetime.now(timezone.utc).isoformat()
             item = {
                 'pk': str(uuid.uuid4()),
-                'role': prompt.role,
-                'tasks': prompt.tasks,
-                'is_active': prompt.is_active,
+                'role': prompt['role'],
+                'tasks': prompt['tasks'],
+                'is_active': prompt['is_active'],
                 'created_at': current_time,
                 'updated_at': current_time
             }
 
             # If this prompt is being set as active, deactivate others first
-            if prompt.is_active:
+            if prompt['is_active']:
                 await self._deactivate_other_prompts(item['pk'])
 
             logger.info(f"Saving new prompt with id: {item['pk']}")
@@ -392,23 +392,23 @@ class DynamoDBService:
         try:
             timestamp = datetime.now(timezone.utc).isoformat()
             item = {
-                'pk': prompt.pk,  
-                'role': prompt.role,
-                'tasks': prompt.tasks,
-                'is_active': prompt.is_active,
-                'created_at': prompt.created_at,
+                'pk': prompt['pk'],
+                'role': prompt['role'],
+                'tasks': prompt['tasks'],
+                'is_active': prompt['is_active'],
+                'created_at': prompt.get('created_at'),
                 'updated_at': timestamp
             }
 
-            if prompt.is_active:
-                await self._deactivate_other_prompts(prompt.pk)
+            if prompt['is_active']:
+                await self._deactivate_other_prompts(prompt['pk'])
 
             logger.info(f"Updating prompt with id: {item['pk']}")
             self.prompts_table.put_item(
                 Item=item,
                 ConditionExpression='attribute_exists(pk) AND updated_at = :old_timestamp',
                 ExpressionAttributeValues={
-                    ':old_timestamp': prompt.updated_at
+                    ':old_timestamp': prompt.get('updated_at')
                 }
             )
             return item
