@@ -19,7 +19,7 @@ locals {
       value = data.aws_region.this.name
     },
     {
-      name  = "FDP_REGION"
+      name  = "FDP_TFVAR_REGION"
       type  = "PLAINTEXT"
       value = data.aws_region.this.name
     },
@@ -34,7 +34,7 @@ locals {
       value = local.fdp_gid
     },
     {
-      name  = "FDP_BUCKET"
+      name  = "FDP_TFVAR_BUCKET"
       type  = "PLAINTEXT"
       value = var.fdp_backend_bucket[data.aws_region.this.name]
     },

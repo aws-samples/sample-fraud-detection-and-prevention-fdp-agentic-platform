@@ -26,6 +26,24 @@ terraform {
   }
 }
 
+variable "fdp_region" {
+  type        = string
+  description = "AWS region (e.g. us-east-1)"
+  default     = ""
+}
+
+variable "fdp_bucket" {
+  type        = string
+  description = "S3 bucket (e.g. fdp-backend-us-east-1)"
+  default     = ""
+}
+
+variable "fdp_website" {
+  type        = string
+  description = "S3 website (e.g. fdp-website-us-east-1)"
+  default     = ""
+}
+
 variable "fdp_backend_bucket" {
   type        = map(string)
   description = "S3 bucket for terraform backend in each supported AWS region"
