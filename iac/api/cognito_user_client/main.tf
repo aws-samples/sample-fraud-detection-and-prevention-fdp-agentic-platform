@@ -78,9 +78,9 @@ resource "aws_secretsmanager_secret" "this" {
 resource "aws_secretsmanager_secret_version" "this" {
   secret_id = aws_secretsmanager_secret.this.id
   secret_string = jsonencode({
-    FDP_API_CLIENT_ID     = aws_cognito_user_pool_client.api.id
-    FDP_API_CLIENT_SECRET = aws_cognito_user_pool_client.api.client_secret
-    FDP_WEB_CLIENT_ID     = aws_cognito_user_pool_client.web.id
-    FDP_WEB_CLIENT_SECRET = aws_cognito_user_pool_client.web.client_secret
+    FDP_TFVAR_API_CLIENT_ID     = aws_cognito_user_pool_client.api.id
+    FDP_TFVAR_API_CLIENT_SECRET = aws_cognito_user_pool_client.api.client_secret
+    FDP_TFVAR_WEB_CLIENT_ID     = aws_cognito_user_pool_client.web.id
+    FDP_TFVAR_WEB_CLIENT_SECRET = aws_cognito_user_pool_client.web.client_secret
   })
 }
