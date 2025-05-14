@@ -1,20 +1,24 @@
-# React AWS Cognito Authentication App
+# React Application
 
-This React application demonstrates authentication flow using AWS Cognito, including sign-in, sign-out, protected routes, and password reset functionality.
+This React application provides document analysis capabilities with AWS Cognito
+authentication, including document scanning, prompt management, and system
+configuration features.
 
 ## Features
 
-- User sign-in with AWS Cognito
+- Document analysis and scanning
+- Prompt management system
+- System configuration interface
+- User authentication with AWS Cognito
 - Protected routes for authenticated users
-- Password reset flow
-- Sign out functionality
-- Responsive design
+- Responsive design with Material-UI
 
 ## Prerequisites
 
 1. Node.js and npm installed
 2. AWS account with Cognito User Pool set up
 3. AWS Cognito User Pool and App Client credentials
+4. AWS API Gateway endpoint configured
 
 ## Setup
 
@@ -24,14 +28,20 @@ This React application demonstrates authentication flow using AWS Cognito, inclu
    npm install
    ```
 
-2. Configure AWS Cognito:
+2. Configure environment variables:
 
-   - Open `src/aws-exports.js`
-   - Replace the following values with your AWS Cognito configuration:
-     - YOUR_REGION
-     - YOUR_USER_POOL_ID
-     - YOUR_APP_CLIENT_ID
-     - YOUR_COGNITO_DOMAIN
+   Create a `.env` file with the following variables:
+
+   ```sh
+   REACT_APP_AWS_REGION=YOUR_REGION
+   REACT_APP_IDENTITY_POOL_ID=YOUR_IDENTITY_POOL_ID
+   REACT_APP_USER_POOL_ID=YOUR_USER_POOL_ID
+   REACT_APP_USER_CLIENT_ID=YOUR_APP_CLIENT_ID
+   REACT_APP_AUTH_URL=YOUR_COGNITO_AUTH_URL
+   REACT_APP_API_URL=YOUR_API_GATEWAY_URL
+   REACT_APP_REDIRECT_SIGNIN=YOUR_SIGNIN_URL
+   REACT_APP_REDIRECT_SIGNOUT=YOUR_SIGNOUT_URL
+   ```
 
 3. Start the development server:
 
@@ -54,19 +64,14 @@ This React application demonstrates authentication flow using AWS Cognito, inclu
 ```sh
 src/
 ├── components/
-│   ├── Dashboard.js
-│   ├── ProtectedRoute.js
-│   ├── ResetPassword.js
-│   ├── SignIn.js
-│   └── __tests__/
-│       ├── Dashboard.test.js
-│       ├── ProtectedRoute.test.js
-│       ├── ResetPassword.test.js
-│       └── SignIn.test.js
-├── context/
-│   └── AuthContext.js
-├── aws-exports.js
-└── App.js
+│   ├── ConfigurationManager.js
+│   ├── DocumentAnalyzer.js
+│   ├── ProcessingAnimation.js
+│   └── PromptManager.js
+├── App.css
+├── App.js
+├── index.css
+└── index.js
 ```
 
 ## Available Scripts
@@ -74,6 +79,7 @@ src/
 - `npm start`: Run development server
 - `npm test`: Run tests
 - `npm run build`: Build for production
+- `npm run analyze`: Analyze bundle size
 
 ## Security Considerations
 
@@ -88,7 +94,7 @@ MIT
 
 ## Sources
 
-- https://docs.amplify.aws/gen1/react/build-a-backend/auth/set-up-auth/
-- https://docs.amplify.aws/gen1/react/build-a-backend/restapi/configure-rest-api/
-- https://docs.amplify.aws/react/build-a-backend/auth/set-up-auth/
-- https://docs.amplify.aws/react/build-a-backend/add-aws-services/rest-api/set-up-rest-api/
+- https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools.html
+- https://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html
+- https://docs.aws.amazon.com/amplify/latest/userguide/welcome.html
+- https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/welcome.html

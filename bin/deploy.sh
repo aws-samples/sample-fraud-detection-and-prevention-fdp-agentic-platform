@@ -43,11 +43,11 @@ while getopts "h:c:d:i:r:s:w:" option; do
     i)
       FDP_GID="$OPTARG";;
     r)
-      FDP_REGION="$OPTARG";;
+      FDP_TFVAR_REGION="$OPTARG";;
     s)
-      FDP_BUCKET="$OPTARG";;
+      FDP_TFVAR_BUCKET="$OPTARG";;
     w)
-      FDP_WEBSITE="$OPTARG";;
+      FDP_TFVAR_WEBSITE="$OPTARG";;
     \?)
       echo "[ERROR] invalid option"
       echo
@@ -56,23 +56,54 @@ while getopts "h:c:d:i:r:s:w:" option; do
   esac
 done
 
-if [ -z "${FDP_REGION}" ] && [ -n "${AWS_DEFAULT_REGION}" ]; then FDP_REGION="${AWS_DEFAULT_REGION}"; fi
-if [ -z "${FDP_REGION}" ] && [ -n "${AWS_REGION}" ]; then FDP_REGION="${AWS_REGION}"; fi
+if [ -z "${FDP_TFVAR_REGION}" ] && [ -n "${AWS_DEFAULT_REGION}" ]; then FDP_TFVAR_REGION="${AWS_DEFAULT_REGION}"; fi
+if [ -z "${FDP_TFVAR_REGION}" ] && [ -n "${AWS_REGION}" ]; then FDP_TFVAR_REGION="${AWS_REGION}"; fi
 
-if [ -z "${FDP_REGION}" ]; then
-  echo "[DEBUG] FDP_REGION: ${FDP_REGION}"
-  echo "[ERROR] FDP_REGION is missing..."; exit 1;
+if [ -z "${FDP_TFVAR_REGION}" ]; then
+  echo "[DEBUG] FDP_TFVAR_REGION: ${FDP_TFVAR_REGION}"
+  echo "[ERROR] FDP_TFVAR_REGION is missing..."; exit 1;
 fi
 
-if [ -z "${FDP_BUCKET}" ]; then
-  echo "[DEBUG] FDP_BUCKET: ${FDP_BUCKET}"
-  echo "[ERROR] FDP_BUCKET is missing..."; exit 1;
+if [ -z "${FDP_TFVAR_BUCKET}" ]; then
+  echo "[DEBUG] FDP_TFVAR_BUCKET: ${FDP_TFVAR_BUCKET}"
+  echo "[ERROR] FDP_TFVAR_BUCKET is missing..."; exit 1;
 fi
 
 if [ -z "${FDP_DIR}" ]; then
   echo "[DEBUG] FDP_DIR: ${FDP_DIR}"
   echo "[ERROR] FDP_DIR is missing..."; exit 1;
 fi
+
+retrieve_secrets() {
+  local FDP_SECRET_PREFIX=$1
+
+  FDP_QUERY="SecretList[?starts_with(Name,\`${FDP_SECRET_PREFIX}-${FDP_TFVAR_REGION}\`)].Name"
+  echo "[EXEC] aws secretsmanager list-secrets --region ${FDP_TFVAR_REGION} --query ${FDP_QUERY} --output text"
+  FDP_RESULT=$(aws secretsmanager list-secrets --region ${FDP_TFVAR_REGION} --query ${FDP_QUERY} --output text)
+
+  if [ "${FDP_RESULT}" != "" ]; then
+    echo "[EXEC] aws secretsmanager get-secret-value --region ${FDP_TFVAR_REGION} --secret-id ${FDP_RESULT} --query SecretString"
+    FDP_SECRET=$(aws secretsmanager get-secret-value --region ${FDP_TFVAR_REGION} --secret-id ${FDP_RESULT} --query SecretString)
+
+    if [ -n "${FDP_DEBUG_SECRETS}" ] && [ "${FDP_DEBUG_SECRETS}" == "true" ]; then
+      echo "[DEBUG] echo ${FDP_SECRET}"
+      echo ${FDP_SECRET}
+    fi
+
+    case ${FDP_SECRET} in \"{*)
+      FDP_SECRET=$(echo "${FDP_SECRET}" | jq -r '.')
+      for i in $(echo ${FDP_SECRET} | jq -r "to_entries|map(\"\(.key)=\(.value|tostring)\")|.[]" ); do
+        export ${i}
+        if [ -n "${FDP_DEBUG_SECRETS}" ] && [ "${FDP_DEBUG_SECRETS}" == "true" ]; then
+          echo "[DEBUG] export ${i}"
+        fi
+      done
+    esac
+  fi
+}
+
+retrieve_secrets "fdp-api-secrets"
+retrieve_secrets "fdp-gui-secrets"
 
 WORKDIR="$( cd "$(dirname "$0")/../" > /dev/null 2>&1 || exit 1; pwd -P )"
 if [ ! -d "${WORKDIR}/${FDP_DIR}/" ]; then
@@ -97,40 +128,9 @@ case ${FDP_DIR} in app/gui*)
   echo "[EXEC] npm install"
   npm install || { echo "[ERROR] npm install failed. aborting..."; cd -; exit 1; }
 
-  retrieve_secrets() {
-    local FDP_SECRET_PREFIX=$1
-
-    FDP_QUERY="SecretList[?starts_with(Name,\`${FDP_SECRET_PREFIX}-${FDP_REGION}\`)].Name"
-    echo "[EXEC] aws secretsmanager list-secrets --region ${FDP_REGION} --query ${FDP_QUERY} --output text"
-    FDP_RESULT=$(aws secretsmanager list-secrets --region ${FDP_REGION} --query ${FDP_QUERY} --output text)
-
-    if [ "${FDP_RESULT}" != "" ]; then
-      echo "[EXEC] aws secretsmanager get-secret-value --region ${FDP_REGION} --secret-id ${FDP_RESULT} --query SecretString"
-      FDP_SECRET=$(aws secretsmanager get-secret-value --region ${FDP_REGION} --secret-id ${FDP_RESULT} --query SecretString)
-
-      if [ -n "${FDP_DEBUG_SECRETS}" ] && [ "${FDP_DEBUG_SECRETS}" == "true" ]; then
-        echo "[DEBUG] echo ${FDP_SECRET}"
-        echo ${FDP_SECRET}
-      fi
-
-      case ${FDP_SECRET} in \"{*)
-        FDP_SECRET=$(echo "${FDP_SECRET}" | jq -r '.')
-        for i in $(echo ${FDP_SECRET} | jq -r "to_entries|map(\"\(.key)=\(.value|tostring)\")|.[]" ); do
-          export ${i}
-          if [ -n "${FDP_DEBUG_SECRETS}" ] && [ "${FDP_DEBUG_SECRETS}" == "true" ]; then
-            echo "[DEBUG] export ${i}"
-          fi
-        done
-      esac
-    fi
-  }
-
-  retrieve_secrets "fdp-api-secrets"
-  retrieve_secrets "fdp-gui-secrets"
-
-  if [ -z "${FDP_WEBSITE}" ]; then
-    echo "[DEBUG] FDP_WEBSITE: ${FDP_WEBSITE}"
-    echo "[ERROR] FDP_WEBSITE is missing..."; exit 1;
+  if [ -z "${FDP_TFVAR_WEBSITE}" ]; then
+    echo "[DEBUG] FDP_TFVAR_WEBSITE: ${FDP_TFVAR_WEBSITE}"
+    echo "[ERROR] FDP_TFVAR_WEBSITE is missing..."; exit 1;
   fi
 
   FDP_CONFIG_FILE="${WORKDIR}/${FDP_DIR}/config.txt"
@@ -151,12 +151,12 @@ case ${FDP_DIR} in app/gui*)
   echo "[EXEC] npm run build"
   npm run build || { echo "[ERROR] npm run build failed. aborting..."; cd -; exit 1; }
 
-  echo "[EXEC] aws s3 sync --delete ${WORKDIR}/${FDP_DIR}/dist/ s3://${FDP_WEBSITE}"
-  aws s3 sync --delete ${WORKDIR}/${FDP_DIR}/dist/ s3://${FDP_WEBSITE} || { echo "[ERROR] aws s3 sync failed. aborting..."; cd -; exit 1; }
+  echo "[EXEC] aws s3 sync --delete ${WORKDIR}/${FDP_DIR}/dist/ s3://${FDP_TFVAR_WEBSITE}"
+  aws s3 sync --delete ${WORKDIR}/${FDP_DIR}/dist/ s3://${FDP_TFVAR_WEBSITE} || { echo "[ERROR] aws s3 sync failed. aborting..."; cd -; exit 1; }
 
-  FDP_QUERY="DistributionList.Items[*].{id:Id,origin:Origins.Items[0].Id}[?starts_with(origin,\`${FDP_WEBSITE}\`)].id"
-  echo "[EXEC] aws cloudfront list-distributions --region ${FDP_REGION} --query ${FDP_QUERY} --output text"
-  FDP_RESULT=$(aws cloudfront list-distributions --region ${FDP_REGION} --query ${FDP_QUERY} --output text)
+  FDP_QUERY="DistributionList.Items[*].{id:Id,origin:Origins.Items[0].Id}[?starts_with(origin,\`${FDP_TFVAR_WEBSITE}\`)].id"
+  echo "[EXEC] aws cloudfront list-distributions --region ${FDP_TFVAR_REGION} --query ${FDP_QUERY} --output text"
+  FDP_RESULT=$(aws cloudfront list-distributions --region ${FDP_TFVAR_REGION} --query ${FDP_QUERY} --output text)
 
   if [ "${FDP_RESULT}" != "" ]; then
     echo "[EXEC] aws cloudfront create-invalidation --distribution-id ${FDP_RESULT} --paths '/*'"
@@ -182,7 +182,7 @@ case ${FDP_DIR} in iac*)
   terragrunt -v > /dev/null 2>&1 || { wget -q https://github.com/gruntwork-io/terragrunt/releases/download/v${TG_VERSION}/terragrunt_linux_386; chmod 0755 terragrunt_*; mv terragrunt_* ${WORKDIR}/bin/terragrunt; }
 
   if [ -z "${FDP_TFVAR_BACKEND_BUCKET}" ]; then
-    export FDP_TFVAR_BACKEND_BUCKET={\"${FDP_REGION}\"=\"${FDP_BUCKET}\"}
+    export FDP_TFVAR_BACKEND_BUCKET={\"${FDP_TFVAR_REGION}\"=\"${FDP_TFVAR_BUCKET}\"}
   fi
 
   if [ -z "${FDP_TFVAR_GID}" ] && [ -n "${FDP_GID}" ]; then
@@ -198,8 +198,8 @@ case ${FDP_DIR} in iac*)
     if [ -n "${BACK}" ]; then OPTIONS=" ${OPTIONS} -var fdp_${FRONT}=${BACK}"; fi
   done <<< "$FDP_TFVARS"
 
-  echo "[EXEC] terragrunt run-all init -backend-config region=${FDP_REGION} -backend-config bucket=${FDP_BUCKET} --no-color"
-  terragrunt run-all init -backend-config region="${FDP_REGION}" -backend-config="bucket=${FDP_BUCKET}" --no-color || { echo "[ERROR] terragrunt run-all init failed. aborting..."; cd -; exit 1; }
+  echo "[EXEC] terragrunt run-all init -backend-config region=${FDP_TFVAR_REGION} -backend-config bucket=${FDP_TFVAR_BUCKET} --no-color"
+  terragrunt run-all init -backend-config region="${FDP_TFVAR_REGION}" -backend-config="bucket=${FDP_TFVAR_BUCKET}" --no-color || { echo "[ERROR] terragrunt run-all init failed. aborting..."; cd -; exit 1; }
 
   if [ -n "${FDP_CLEANUP}" ] && [ "${FDP_CLEANUP}" == "true" ]; then
     echo "[EXEC] terragrunt run-all destroy -auto-approve -var-file default.tfvars $OPTIONS --no-color"

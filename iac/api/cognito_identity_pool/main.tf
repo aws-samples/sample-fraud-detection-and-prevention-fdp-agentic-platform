@@ -40,15 +40,15 @@ resource "aws_secretsmanager_secret" "this" {
 resource "aws_secretsmanager_secret_version" "this" {
   secret_id = aws_secretsmanager_secret.this.id
   secret_string = jsonencode({
-    FDP_API_GATEWAY_URL = (
+    FDP_TFVAR_API_GATEWAY_URL = (
       data.terraform_remote_state.domain.outputs.api_url != ""
       ? data.terraform_remote_state.domain.outputs.api_url
       : data.terraform_remote_state.api.outputs.stage_invoke_url
     )
-    FDP_COGNITO_AUTH_URL         = data.terraform_remote_state.domain.outputs.auth_url
-    FDP_COGNITO_IDENTITY_POOL_ID = aws_cognito_identity_pool.this.id
-    FDP_COGNITO_USER_POOL_ID     = data.terraform_remote_state.cognito.outputs.id
-    FDP_COGNITO_USER_CLIENT_ID   = data.terraform_remote_state.client.outputs.web
-    FDP_REGION                   = data.aws_region.this.name
+    FDP_TFVAR_COGNITO_AUTH_URL         = data.terraform_remote_state.domain.outputs.auth_url
+    FDP_TFVAR_COGNITO_IDENTITY_POOL_ID = aws_cognito_identity_pool.this.id
+    FDP_TFVAR_COGNITO_USER_POOL_ID     = data.terraform_remote_state.cognito.outputs.id
+    FDP_TFVAR_COGNITO_USER_CLIENT_ID   = data.terraform_remote_state.client.outputs.web
+    FDP_TFVAR_REGION                   = data.aws_region.this.name
   })
 }
