@@ -74,6 +74,15 @@ if [ -z "${FDP_DIR}" ]; then
   echo "[ERROR] FDP_DIR is missing..."; exit 1;
 fi
 
+WORKDIR="$( cd "$(dirname "$0")/../" > /dev/null 2>&1 || exit 1; pwd -P )"
+if [ ! -d "${WORKDIR}/${FDP_DIR}/" ]; then
+  echo "[DEBUG] FDP_DIR: ${FDP_DIR}"
+  echo "[ERROR] ${WORKDIR}/${FDP_DIR}/ does not exist..."; exit 1;
+fi
+
+echo "[EXEC] cd ${WORKDIR}/${FDP_DIR}/"
+cd "${WORKDIR}/${FDP_DIR}/"
+
 retrieve_secrets() {
   local FDP_SECRET_PREFIX=$1
 
@@ -101,15 +110,6 @@ retrieve_secrets() {
     esac
   fi
 }
-
-WORKDIR="$( cd "$(dirname "$0")/../" > /dev/null 2>&1 || exit 1; pwd -P )"
-if [ ! -d "${WORKDIR}/${FDP_DIR}/" ]; then
-  echo "[DEBUG] FDP_DIR: ${FDP_DIR}"
-  echo "[ERROR] ${WORKDIR}/${FDP_DIR}/ does not exist..."; exit 1;
-fi
-
-echo "[EXEC] cd ${WORKDIR}/${FDP_DIR}/"
-cd "${WORKDIR}/${FDP_DIR}/"
 
 case ${FDP_DIR} in app/gui*)
   echo "
