@@ -157,7 +157,7 @@ function PromptManager({ accessToken }) {
   const handleAPIError = (error) => {
     console.error('API Error:', error);
     let errorMessage = 'An unexpected error occurred';
-  
+
     if (error.response) {
       errorMessage = error.response.data.message || 
                     error.response.data.error || 

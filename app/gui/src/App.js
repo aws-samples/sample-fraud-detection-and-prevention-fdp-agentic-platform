@@ -35,32 +35,30 @@ const collapsedWidth = 65;
 
 // Amplify Configuration
 Amplify.configure({
-  "aws_project_region": process.env.REACT_APP_AWS_REGION,
-  "aws_cognito_region": process.env.REACT_APP_AWS_REGION,
-  "aws_cognito_identity_pool_id": process.env.REACT_APP_IDENTITY_POOL_ID,
-  "aws_user_pools_id": process.env.REACT_APP_USER_POOL_ID,
-  "aws_user_pools_web_client_id": process.env.REACT_APP_USER_CLIENT_ID,
-  "aws_cognito_username_attributes": [],
-  "aws_cognito_social_providers": [],
-  "aws_cognito_signup_attributes": ["EMAIL"],
-  "aws_cognito_mfa_configuration": "OFF",
-  "aws_cognito_mfa_types": ["SMS"],
-  "aws_cognito_password_protection_settings": {
-    "passwordPolicyMinLength": 8,
-    "passwordPolicyCharacters": []
+  Auth: {
+    Cognito: {
+      region: process.env.REACT_APP_AWS_REGION,
+      identityPoolId: process.env.REACT_APP_IDENTITY_POOL_ID,
+      userPoolId: process.env.REACT_APP_USER_POOL_ID,
+      userPoolClientId: process.env.REACT_APP_USER_CLIENT_ID,
+      signUpAttributes: ["EMAIL"],
+      passwordFormat: {
+        minLength: 8
+      },
+      mfa: {
+        status: "OFF",
+        types: ["SMS"]
+      },
+      verificationMechanisms: ["EMAIL"]
+    }
   },
-  "aws_cognito_verification_mechanisms": ["EMAIL"],
-  "oauth": {},
-
-  // API Gateway configuration
   API: {
-    endpoints: [
-      {
-        name: 'documentAnalyzerApi',
+    REST: {
+      documentAnalyzerApi: {
         endpoint: process.env.REACT_APP_API_URL,
         region: process.env.REACT_APP_AWS_REGION
       }
-    ]
+    }
   }
 });
 
