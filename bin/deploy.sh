@@ -102,9 +102,6 @@ retrieve_secrets() {
   fi
 }
 
-retrieve_secrets "fdp-api-secrets"
-retrieve_secrets "fdp-gui-secrets"
-
 WORKDIR="$( cd "$(dirname "$0")/../" > /dev/null 2>&1 || exit 1; pwd -P )"
 if [ ! -d "${WORKDIR}/${FDP_DIR}/" ]; then
   echo "[DEBUG] FDP_DIR: ${FDP_DIR}"
@@ -127,6 +124,9 @@ case ${FDP_DIR} in app/gui*)
 
   echo "[EXEC] npm install"
   npm install || { echo "[ERROR] npm install failed. aborting..."; cd -; exit 1; }
+
+  retrieve_secrets "fdp-api-secrets"
+  retrieve_secrets "fdp-gui-secrets"
 
   if [ -z "${FDP_TFVAR_WEBSITE}" ]; then
     echo "[DEBUG] FDP_TFVAR_WEBSITE: ${FDP_TFVAR_WEBSITE}"
