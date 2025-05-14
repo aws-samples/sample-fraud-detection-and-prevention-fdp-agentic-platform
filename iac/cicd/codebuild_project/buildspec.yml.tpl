@@ -20,7 +20,7 @@ phases:
       - echo "aws_access_key_id=$AWS_ACCESS_KEY_ID" >> $HOME/.aws/credentials
       - echo "aws_secret_access_key=$AWS_SECRET_ACCESS_KEY" >> $HOME/.aws/credentials
       - echo "aws_session_token=$AWS_SESSION_TOKEN" >> $HOME/.aws/credentials
-      - /bin/bash ./bin/deploy.sh -d $FDP_DIR -r $FDP_REGION -s $FDP_BUCKET -i $FDP_GID
+      - /bin/bash ./bin/deploy.sh -d $FDP_DIR -i $FDP_GID -r $FDP_TFVAR_REGION -s $FDP_TFVAR_BUCKET
 
 cache:
   paths:
