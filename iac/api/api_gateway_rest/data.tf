@@ -1,8 +1,13 @@
 # Copyright (C) Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: MIT-0
 
-data "aws_service_principal" "this" {
+data "aws_service_principal" "agw" {
   service_name = "apigateway"
+  region       = data.aws_region.this.name
+}
+
+data "aws_service_principal" "cognito" {
+  service_name = "cognito-idp"
   region       = data.aws_region.this.name
 }
 

@@ -1,3 +1,6 @@
+# Copyright (C) Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT-0
+
 # AWS Configuration
 REACT_APP_AWS_REGION="{{FDP_TFVAR_REGION}}"
 REACT_APP_IDENTITY_POOL_ID="{{FDP_TFVAR_COGNITO_IDENTITY_POOL_ID}}"

@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: MIT-0
 """Agent Manager"""
 
-# agent-manager/function.py
 import json
 import logging
 import os
@@ -110,3 +109,6 @@ def handler(event, context):
         return create_verifications(event, context)
 
     return create_api_response(404, {'detail': 'Not Found'})
+
+if __name__ == '__main__':
+    handler(event=None, context=None)

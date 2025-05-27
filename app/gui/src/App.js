@@ -1,7 +1,10 @@
+// Copyright (C) Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: MIT-0
+
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { Amplify } from 'aws-amplify';
+import { getAuthToken } from './utils/auth';
 import { withAuthenticator } from '@aws-amplify/ui-react';
-import { fetchAuthSession } from 'aws-amplify/auth';
 import '@aws-amplify/ui-react/styles.css';
 import {
   Box,
@@ -41,20 +44,31 @@ Amplify.configure({
       identityPoolId: process.env.REACT_APP_IDENTITY_POOL_ID,
       userPoolId: process.env.REACT_APP_USER_POOL_ID,
       userPoolClientId: process.env.REACT_APP_USER_CLIENT_ID,
-      signUpAttributes: ["EMAIL"],
-      passwordFormat: {
-        minLength: 8
-      },
       mfa: {
         status: "OFF",
         types: ["SMS"]
       },
+      // oauth: {
+      //   domain: process.env.REACT_APP_AUTH_URL,
+      //   clientId: process.env.REACT_APP_USER_CLIENT_ID,
+      //   scopes: [
+      //     'aws.cognito.signin.user.admin', 'openid',
+      //     'email', 'profile', 'fdp/read', 'fdp/write'
+      //   ],
+      //   // redirectSignIn: 'http://localhost:3000/',
+      //   // redirectSignOut: 'http://localhost:3000/',
+      //   // responseType: 'code'
+      // },
+      passwordFormat: {
+        minLength: 8
+      },
+      signUpAttributes: ["EMAIL"],
       verificationMechanisms: ["EMAIL"]
     }
   },
   API: {
     REST: {
-      documentAnalyzerApi: {
+      secureApi: {
         endpoint: process.env.REACT_APP_API_URL,
         region: process.env.REACT_APP_AWS_REGION
       }
@@ -74,8 +88,9 @@ function App({ signOut, user }) {
     const getAccessToken = async () => {
       try {
         setIsLoading(true);
-        const session = await fetchAuthSession();
-        setAccessToken(session.tokens?.accessToken);
+        const jwtToken = await getAuthToken();
+        console.log("JWT Token available:", Boolean(jwtToken));
+        setAccessToken(jwtToken);
       } catch (error) {
         console.error('Error fetching auth session:', error);
       } finally {

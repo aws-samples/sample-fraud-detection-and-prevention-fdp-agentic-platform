@@ -13,6 +13,7 @@ q = {
   cw_group_name_prefix = "API-Gateway-Execution-Logs"
   retention_in_days    = 5
   skip_destroy         = true
+  lambda_for_cognito   = "userpool"
 }
 
 types = ["REGIONAL"]
