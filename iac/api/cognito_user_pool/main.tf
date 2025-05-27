@@ -33,6 +33,19 @@ resource "aws_cognito_user_pool" "this" {
     email_sending_account = var.q.email_sending_account
   }
 
+  lambda_config {
+    pre_token_generation_config {
+      lambda_version = "V3_0"
+      lambda_arn     = format(
+        "arn:%s:lambda:%s:%s:function:%s-%s",
+        data.aws_partition.this.partition,
+        data.aws_region.this.id,
+        data.aws_caller_identity.this.account_id,
+        var.q.name, local.fdp_gid
+      )
+    }
+  }
+
   # password_policy {
   #   minimum_length                   = var.q.minimum_length
   #   require_lowercase                = var.q.require_lowercase

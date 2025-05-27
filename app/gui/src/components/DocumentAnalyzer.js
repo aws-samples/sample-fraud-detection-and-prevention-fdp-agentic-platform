@@ -1,4 +1,6 @@
-// src/components/DocumentAnalyzer.js
+// Copyright (C) Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: MIT-0
+
 import { useState, useEffect } from 'react';
 import { apiGet, apiPost } from '../utils/api';
 import { forceLogout } from '../utils/auth';

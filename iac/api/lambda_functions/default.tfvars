@@ -47,7 +47,7 @@ r = [{
   file = "lib/requirements.txt"
   }, {
   key  = "token"
-  name = "fdp-lambda-token"
+  name = "fdp-user-pool"
   desc = "FDP LAMBDA TOKEN"
   path = "../../../app/api/pre-token-generator"
   file = "lib/requirements.txt"

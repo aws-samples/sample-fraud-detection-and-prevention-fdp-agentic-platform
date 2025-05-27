@@ -1,3 +1,6 @@
+// Copyright (C) Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: MIT-0
+
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { Amplify } from 'aws-amplify';
 import { getAuthToken } from './utils/auth';
@@ -45,17 +48,17 @@ Amplify.configure({
         status: "OFF",
         types: ["SMS"]
       },
-      oauth: {
-        domain: process.env.REACT_APP_AUTH_URL,
-        clientId: process.env.REACT_APP_USER_CLIENT_ID,
-        scopes: [
-          'aws.cognito.signin.user.admin', 'openid',
-          'email', 'profile', 'fdp/read', 'fdp/write'
-        ],
-        // redirectSignIn: 'http://localhost:3000/',
-        // redirectSignOut: 'http://localhost:3000/',
-        // responseType: 'code'
-      },
+      // oauth: {
+      //   domain: process.env.REACT_APP_AUTH_URL,
+      //   clientId: process.env.REACT_APP_USER_CLIENT_ID,
+      //   scopes: [
+      //     'aws.cognito.signin.user.admin', 'openid',
+      //     'email', 'profile', 'fdp/read', 'fdp/write'
+      //   ],
+      //   // redirectSignIn: 'http://localhost:3000/',
+      //   // redirectSignOut: 'http://localhost:3000/',
+      //   // responseType: 'code'
+      // },
       passwordFormat: {
         minLength: 8
       },

@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: MIT-0
 """Prompt Manager Function"""
 
-# prompt-manager/function.py
 import json
 import logging
 from dotenv import load_dotenv

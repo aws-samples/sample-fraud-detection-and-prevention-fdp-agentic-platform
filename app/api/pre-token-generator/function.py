@@ -1,8 +1,7 @@
 # Copyright (C) Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: MIT-0
-"""Pre-Toke Generator"""
+"""Pre-Token Generator"""
 
-# agent-manager/function.py
 import json
 import logging
 
@@ -22,7 +21,7 @@ def handler(event, context):
         }
     }
 
-    # return modified ID token to Amazon Cognito
+    # return modified token to Cognito
     return event
 
 if __name__ == '__main__':

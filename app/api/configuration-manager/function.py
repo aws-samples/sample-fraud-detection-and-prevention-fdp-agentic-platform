@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: MIT-0
 """Configuration Manager"""
 
-# configuration-manager/function.py
 import json
 import logging
 from dotenv import load_dotenv

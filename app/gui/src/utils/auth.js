@@ -1,3 +1,6 @@
+// Copyright (C) Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: MIT-0
+
 import { getCurrentUser, fetchAuthSession, signOut } from 'aws-amplify/auth';
 
 // Check if user is authenticated

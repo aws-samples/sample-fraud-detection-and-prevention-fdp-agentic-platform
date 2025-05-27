@@ -1,3 +1,6 @@
+// Copyright (C) Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: MIT-0
+
 import { getAuthToken } from './auth';
 import { get, post, put, del } from 'aws-amplify/api';
 

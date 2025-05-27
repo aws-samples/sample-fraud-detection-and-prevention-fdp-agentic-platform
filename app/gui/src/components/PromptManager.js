@@ -1,4 +1,6 @@
-// src/components/PromptManager.js
+// Copyright (C) Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: MIT-0
+
 import { useState, useEffect } from 'react';
 import { forceLogout } from '../utils/auth';
 import { apiGet, apiPost, apiPut, apiDelete } from '../utils/api';

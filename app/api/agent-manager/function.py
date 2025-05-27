@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: MIT-0
 """Agent Manager"""
 
-# agent-manager/function.py
 import json
 import logging
 import os
