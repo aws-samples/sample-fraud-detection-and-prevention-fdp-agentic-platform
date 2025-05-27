@@ -1,7 +1,7 @@
 // src/components/DocumentAnalyzer.js
 import { useState, useEffect } from 'react';
-import { generateClient } from 'aws-amplify/api';
-import { signOut } from 'aws-amplify/auth';
+import { apiGet, apiPost } from '../utils/api';
+import { forceLogout } from '../utils/auth';
 import ProcessingAnimation from './ProcessingAnimation';
 import {
   Box,
@@ -39,7 +39,6 @@ function DocumentAnalyzer({ accessToken }) {
   const [selectedResult, setSelectedResult] = useState(null);
   const [openImageDialog, setOpenImageDialog] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
-  const client = generateClient();
 
   useEffect(() => {
     if (accessToken) {
@@ -48,13 +47,14 @@ function DocumentAnalyzer({ accessToken }) {
   }, [accessToken]);
 
   const handleAPIError = (error) => {
-    console.error('API Error:', error);
     let errorMessage = 'An unexpected error occurred';
 
     if (error.response) {
-      errorMessage = error.response.data.message || 
-                    error.response.data.error || 
-                    `Error: ${error.response.status}`;
+      errorMessage = (
+        error.response.data.message ||
+        error.response.data.error ||
+        `Error: ${error.response.status}`
+      );
     } else if (error.message) {
       errorMessage = error.message;
     }
@@ -65,7 +65,7 @@ function DocumentAnalyzer({ accessToken }) {
   const handleAuthError = async (error) => {
     if (error.response?.status === 401) {
       try {
-        await signOut();
+        await forceLogout();
         // Handle redirect after signout if needed
       } catch (signOutError) {
         console.error('Error signing out:', signOutError);
@@ -75,33 +75,27 @@ function DocumentAnalyzer({ accessToken }) {
 
   const fetchVerifications = async () => {
     try {
-      console.log('Fetching verifications...');
+      console.log('Fetching verifications...', accessToken);
 
-      const response = await client.get({
-        apiName: 'documentAnalyzerApi',
-        path: '/verifications',
-        headers: {
-          Authorization: accessToken
-        }
-      });
-
-      console.log('Verification data:', response);
+      const data = await apiGet('/verifications', accessToken);
+      console.log('Verifications data:', data);
 
       // Ensure the response data is in the expected format
-      if (Array.isArray(response)) {
+      if (Array.isArray(data)) {
         // Add data validation
-        const validatedData = response.map(doc => ({
+        const validatedData = data.map(doc => ({
           ...doc,
-          id: doc.id || `temp-${Date.now()}`, // Ensure each doc has an ID
-          confidence: Number(doc.confidence), // Convert confidence to number
-          preview_url: doc.preview_url || '', // Ensure preview_url exists
-          document_type: doc.document_type || 'Unknown', // Ensure document_type exists
-          timestamp: doc.timestamp || new Date().toISOString() // Ensure timestamp exists
+          id: doc.id || `temp-${Date.now()}`,
+          confidence: Number(doc.confidence),
+          preview_url: doc.preview_url || '',
+          document_type: doc.document_type || 'Unknown',
+          timestamp: doc.timestamp || new Date().toISOString()
         }));
 
         setAnalyzedDocuments(validatedData);
       } else {
-        throw new Error('Invalid response format');
+        console.warn('Response is not an array:', data);
+        setAnalyzedDocuments([]);
       }
     } catch (error) {
       console.error('Error details:', {
@@ -150,26 +144,15 @@ function DocumentAnalyzer({ accessToken }) {
 
     try {
       const base64Image = preview.split(',')[1];
-
-      const response = await client.post({
-        apiName: 'documentAnalyzerApi',
-        path: '/verifications',
-        headers: {
-          Authorization: accessToken
-        },
-        options: {
-          body: {
-            image_base64: base64Image
-          }
-        }
+      const data = await apiPost('/verifications', accessToken, {
+        options: { body: { image_base64: base64Image } }
       });
-
-      console.log('Analysis response:', response);
+      console.log('Analyzer data:', data);
 
       const processedResponse = {
-        ...response,
-        confidence: Number(response.confidence),
-        preview_url: response.preview_url
+        ...data,
+        confidence: Number(data.confidence),
+        preview_url: data.preview_url
       };
 
       console.log('Processed response:', processedResponse);

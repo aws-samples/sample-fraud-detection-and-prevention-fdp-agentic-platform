@@ -1,6 +1,6 @@
 // src/components/ConfigurationManager.js
 import { useState, useEffect } from 'react';
-import { generateClient } from 'aws-amplify/api';
+import { apiGet, apiPut } from '../utils/api';
 import {
   Box,
   Paper,
@@ -27,24 +27,12 @@ function ConfigurationManager({ accessToken }) {
     }
   }, [accessToken]);
 
-  const client = generateClient();
-
   const fetchConfigurations = async () => {
+    console.log('Fetching configurations...', accessToken);
+
     try {
-      const modelResponse = await client.get({
-        apiName: 'documentAnalyzerApi',
-        path: '/configurations/MODEL_IDS',
-        headers: {
-          Authorization: accessToken
-        }
-      });
-      const inferenceResponse = await client.get({
-        apiName: 'documentAnalyzerApi',
-        path: '/configurations/INFERENCE_PARAMS',
-        headers: {
-          Authorization: accessToken
-        }
-      });
+      const modelResponse = await apiGet('/configurations/MODEL_IDS', accessToken);
+      const inferenceResponse = await apiGet('/configurations/INFERENCE_PARAMS', accessToken);
       setModelConfigs(modelResponse);
       setInferenceConfigs(inferenceResponse);
     } catch (error) {
@@ -56,7 +44,7 @@ function ConfigurationManager({ accessToken }) {
       handleAPIError(error);
     }
   };
-  
+
   const handleUpdate = async (config) => {
     try {
       if (config.id === 'MODEL_IDS' && config.is_active) {
@@ -66,61 +54,45 @@ function ConfigurationManager({ accessToken }) {
             is_active: modelConfig.key === config.key
           }))
         );
-  
+
         // Deactivate all other models in the backend
         const updates = modelConfigs.map(modelConfig => {
           if (modelConfig.key !== config.key) {
-            return client.put({
-              apiName: 'documentAnalyzerApi',
-              path: '/configurations',
-              headers: {
-                Authorization: accessToken
-              },
-              options: {
-                body: {
-                  ...modelConfig,
-                  is_active: false
-                }
-              }
+            return apiPut('/configurations', accessToken, {
+              options: { body: { ...modelConfig, is_active: false }}
             });
           }
           return Promise.resolve();
         });
-        
+
         await Promise.all(updates);
       }
-      
+
       // Update the current config
-      await client.put({
-        apiName: 'documentAnalyzerApi',
-        path: '/configurations',
-        headers: {
-          Authorization: accessToken
-        },
-        options: {
-          body: config
-        }
+      const data = await apiPut('/configurations', accessToken, {
+        options: { body: config }
       });
-      await fetchConfigurations();
+      const config = await fetchConfigurations();
     } catch (error) {
       handleAPIError(error);
       await fetchConfigurations();
     }
   };
-  
+
   const handleAPIError = (error) => {
     console.error('API Error:', error);
     let errorMessage = 'An unexpected error occurred';
   
     if (error.response) {
-      errorMessage = error.response.data.message || 
-                    error.response.data.error || 
-                    `Error: ${error.response.status}`;
+      errorMessage = (
+        error.response.data.message ||
+        error.response.data.error ||
+        `Error: ${error.response.status}`
+      );
     } else if (error.message) {
       errorMessage = error.message;
     }
   };
-  
 
   return (
     <Box sx={{ p: 3 }}>

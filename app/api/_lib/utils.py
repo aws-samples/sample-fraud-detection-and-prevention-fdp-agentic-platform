@@ -13,11 +13,11 @@ def extract_confidence_score(text: str) -> float:
         # First try to find the exact pattern
         pattern = r'\*{0,2}Confidence Score:\*{0,2}\s*(\d+(?:\.\d+)?)'
         match = re.search(pattern, text, re.IGNORECASE)
-        
+
         if match:
             value = float(match.group(1))
             return value / 100 if value > 1 else value
-            
+
         patterns = [
             r'\*{0,2}confidence:?\*{0,2}\s*(\d+(?:\.\d+)?)',
             r'\*{0,2}confidence level:?\*{0,2}\s*(\d+(?:\.\d+)?)',
@@ -25,15 +25,15 @@ def extract_confidence_score(text: str) -> float:
             r'\*{0,2}Confidence Score for Check Authenticity:?\*{0,2}\s*(\d+(?:\.\d+)?)',
             r'\*{0,2}Confidence Score for Document Authenticity:?\*{0,2}\s*(\d+(?:\.\d+)?)'
         ]
-        
+
         for pattern in patterns:
             match = re.search(pattern, text, re.IGNORECASE)
             if match:
                 value = float(match.group(1))
                 return value / 100 if value > 1 else value
-        
+
         return 0.0
-        
+
     except Exception as e:
         logger.error(f"Error extracting confidence score: {str(e)}")
         return 0.0
@@ -42,23 +42,23 @@ def extract_document_type(text: str) -> str:
     try:
         pattern = r'\*{0,2}Document Type:\*{0,2}\s*([^\n]+)'
         match = re.search(pattern, text, re.IGNORECASE)
-        
+
         if match:
             return match.group(1).strip().replace('*', '')
-            
+
         patterns = [
             r'\*{0,2}type of document:?\*{0,2}\s*([^\n]+)',
             r'\*{0,2}document:?\*{0,2}\s*([^\n]+)',
             r'\*{0,2}identified as:?\*{0,2}\s*([^\n]+)'
         ]
-        
+
         for pattern in patterns:
             match = re.search(pattern, text, re.IGNORECASE)
             if match:
                 return match.group(1).strip().replace('*', '')
-        
+
         return "Unknown Document"
-        
+
     except Exception as e:
         logger.error(f"Error extracting document type: {str(e)}")
         return "Unknown Document"

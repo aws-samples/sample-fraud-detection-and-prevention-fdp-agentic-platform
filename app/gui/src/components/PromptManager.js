@@ -1,7 +1,7 @@
 // src/components/PromptManager.js
 import { useState, useEffect } from 'react';
-import { generateClient } from 'aws-amplify/api';
-import { signOut } from 'aws-amplify/auth';
+import { forceLogout } from '../utils/auth';
+import { apiGet, apiPost, apiPut, apiDelete } from '../utils/api';
 import {
   Box,
   Paper,
@@ -41,7 +41,6 @@ function PromptManager({ accessToken }) {
   const [formErrors, setFormErrors] = useState({});
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
   const [previewPrompt, setPreviewPrompt] = useState(null);
-  const client = generateClient();
 
   useEffect(() => {
     if (accessToken) {
@@ -50,17 +49,22 @@ function PromptManager({ accessToken }) {
   }, [accessToken]);
 
   const fetchPrompts = async () => {
+    console.log('Fetching prompts...', accessToken);
+
     setLoading(true);
     setError(null);
+
     try {
-      const response = await client.get({
-        apiName: 'documentAnalyzerApi',
-        path: '/prompts',
-        headers: {
-          Authorization: accessToken
-        }
-      });
-      setPrompts(response);
+      const data = await apiGet('/prompts', accessToken);
+      console.log('Prompts data:', data);
+
+      if (!data) {
+        console.error('Response or body is undefined');
+        setPrompts([]);
+        return;
+      }
+
+      setPrompts(data);
     } catch (error) {
       console.error('Error details:', {
         message: error.message,
@@ -91,15 +95,8 @@ function PromptManager({ accessToken }) {
     setLoading(true);
     try {
       if (isEditing) {
-        await client.put({
-          apiName: 'documentAnalyzerApi',
-          path: `/prompts/${currentPrompt.id}`,
-          headers: {
-            Authorization: accessToken
-          },
-          options: {
-            body: currentPrompt
-          }
+        const data = await apiPut(`/prompts/${currentPrompt.id}`, accessToken, {
+          options: { body: currentPrompt }
         });
         setSnackbar({
           open: true,
@@ -107,15 +104,8 @@ function PromptManager({ accessToken }) {
           severity: 'success'
         });
       } else {
-        await client.post({
-          apiName: 'documentAnalyzerApi',
-          path: '/prompts',
-          headers: {
-            Authorization: accessToken
-          },
-          options: {
-            body: currentPrompt
-          }
+        const data = await apiPost('/prompts', accessToken, {
+          options: { body: currentPrompt }
         });
         setSnackbar({
           open: true,
@@ -134,13 +124,7 @@ function PromptManager({ accessToken }) {
 
   const handleDelete = async () => {
     try {
-      await client.del({
-        apiName: 'documentAnalyzerApi',
-        path: `/prompts/${deletePromptId}`,
-        headers: {
-          Authorization: accessToken
-        }
-      });
+      const data = await apiDelete(`/prompts/${deletePromptId}`, accessToken);
       setSnackbar({
         open: true,
         message: 'Prompt deleted successfully',
@@ -155,13 +139,14 @@ function PromptManager({ accessToken }) {
   };
 
   const handleAPIError = (error) => {
-    console.error('API Error:', error);
     let errorMessage = 'An unexpected error occurred';
 
     if (error.response) {
-      errorMessage = error.response.data.message || 
-                    error.response.data.error || 
-                    `Error: ${error.response.status}`;
+      errorMessage = (
+        error.response.data.message ||
+        error.response.data.error ||
+        `Error: ${error.response.status}`
+      );
     } else if (error.message) {
       errorMessage = error.message;
     }
@@ -176,7 +161,7 @@ function PromptManager({ accessToken }) {
   const handleAuthError = async (error) => {
     if (error.response?.status === 401) {
       try {
-        await signOut();
+        await forceLogout();
         // Handle redirect after signout if needed
       } catch (signOutError) {
         console.error('Error signing out:', signOutError);

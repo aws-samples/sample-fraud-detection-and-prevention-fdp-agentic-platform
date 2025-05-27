@@ -122,3 +122,6 @@ def handler(event, context):
         return update_configuration(event, context)
 
     return create_api_response(404, {'detail': 'Not Found'})
+
+if __name__ == '__main__':
+    handler(event=None, context=None)

@@ -7,7 +7,7 @@ import json
 import uuid
 from datetime import datetime, timezone
 from decimal import Decimal
-from utils import extract_confidence_score, extract_document_type
+from lib.utils import extract_confidence_score, extract_document_type
 
 class DocumentAnalyzer:
     """Document Analyzer"""

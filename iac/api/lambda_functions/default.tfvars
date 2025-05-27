@@ -45,4 +45,10 @@ r = [{
   desc = "FDP LAMBDA PROMPT"
   path = "../../../app/api/prompt-manager"
   file = "lib/requirements.txt"
+  }, {
+  key  = "token"
+  name = "fdp-lambda-token"
+  desc = "FDP LAMBDA TOKEN"
+  path = "../../../app/api/pre-token-generator"
+  file = "lib/requirements.txt"
 }]

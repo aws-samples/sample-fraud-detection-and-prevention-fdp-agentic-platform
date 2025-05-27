@@ -147,3 +147,6 @@ def handler(event, context):
     except Exception as e:
         LOGGER.error("Error processing request: %s", str(e))
         return create_api_response(500, {'detail': str(e)})
+
+if __name__ == '__main__':
+    handler(event=None, context=None)
