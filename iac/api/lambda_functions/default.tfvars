@@ -46,9 +46,9 @@ r = [{
   path = "../../../app/api/prompt-manager"
   file = "lib/requirements.txt"
   }, {
-  key  = "token"
+  key  = "userpool"
   name = "fdp-user-pool"
-  desc = "FDP LAMBDA TOKEN"
+  desc = "FDP LAMBDA COGNITO"
   path = "../../../app/api/pre-token-generator"
   file = "lib/requirements.txt"
 }]

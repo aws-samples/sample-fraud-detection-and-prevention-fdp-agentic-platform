@@ -81,7 +81,15 @@ resource "aws_cloudwatch_log_group" "this" {
 resource "aws_lambda_permission" "this" {
   count         = length(local.lambdas)
   action        = "lambda:InvokeFunction"
-  principal     = data.aws_service_principal.this.name
   function_name = data.terraform_remote_state.lambda.outputs.name[local.lambdas[count.index]]
-  source_arn    = format("%s/*/*", aws_api_gateway_rest_api.this.execution_arn)
+  principal     = (
+    element(local.lambdas, count.index) != var.q.lambda_for_cognito
+    ? data.aws_service_principal.agw.name
+    : data.aws_service_principal.cognito.name
+  )
+  source_arn    = (
+    element(local.lambdas, count.index) != var.q.lambda_for_cognito
+    ? "${aws_api_gateway_rest_api.this.execution_arn}/*/*"
+    : data.terraform_remote_state.cognito.outputs.arn
+  )
 }
