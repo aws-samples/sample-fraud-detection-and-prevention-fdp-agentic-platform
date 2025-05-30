@@ -60,13 +60,10 @@ function PromptManager({ accessToken }) {
       const data = await apiGet('/prompts', accessToken);
       console.log('Prompts data:', data);
 
-      if (!data) {
-        console.error('Response or body is undefined');
-        setPrompts([]);
-        return;
-      }
+      // With fetch API, data should already be parsed JSON
+      // Just ensure it's an array for safety
+      setPrompts(Array.isArray(data) ? data : []);
 
-      setPrompts(data);
     } catch (error) {
       console.error('Error details:', {
         message: error.message,
@@ -74,10 +71,12 @@ function PromptManager({ accessToken }) {
         stack: error.stack
       });
       handleAPIError(error);
+      setPrompts([]); // Ensure prompts is an array even on error
     } finally {
       setLoading(false);
     }
   };
+
 
   const validateForm = () => {
     const errors = {};
@@ -97,18 +96,38 @@ function PromptManager({ accessToken }) {
     setLoading(true);
     try {
       if (isEditing) {
-        const data = await apiPut(`/prompts/${currentPrompt.id}`, accessToken, {
-          options: { body: currentPrompt }
+        // Use pk instead of id
+        const promptId = currentPrompt.pk || currentPrompt.id;
+        console.log('Updating prompt with ID:', promptId);
+        console.log('Current prompt object:', currentPrompt);
+
+        if (!promptId) {
+          console.error('Cannot update prompt: ID is undefined', currentPrompt);
+          setSnackbar({
+            open: true,
+            message: 'Error: Cannot update prompt without an ID',
+            severity: 'error'
+          });
+          setLoading(false);
+          return;
+        }
+
+        // Use the apiPut function that works for GET
+        await apiPut(`/prompts/${promptId}`, accessToken, {
+          body: currentPrompt
         });
+
         setSnackbar({
           open: true,
           message: 'Prompt updated successfully',
           severity: 'success'
         });
       } else {
+        // Creating new prompt
         const data = await apiPost('/prompts', accessToken, {
-          options: { body: currentPrompt }
+          body: currentPrompt
         });
+
         setSnackbar({
           open: true,
           message: 'Prompt created successfully',
@@ -118,6 +137,7 @@ function PromptManager({ accessToken }) {
       handleClose();
       fetchPrompts();
     } catch (error) {
+      console.error('Submit error details:', error);
       handleAPIError(error);
     } finally {
       setLoading(false);
@@ -126,7 +146,11 @@ function PromptManager({ accessToken }) {
 
   const handleDelete = async () => {
     try {
-      const data = await apiDelete(`/prompts/${deletePromptId}`, accessToken);
+      console.log('Deleting prompt with ID:', deletePromptId);
+
+      // Use the apiDelete function that works for GET
+      await apiDelete(`/prompts/${deletePromptId}`, accessToken);
+
       setSnackbar({
         open: true,
         message: 'Prompt deleted successfully',
@@ -134,11 +158,13 @@ function PromptManager({ accessToken }) {
       });
       fetchPrompts();
     } catch (error) {
+      console.error('Delete error details:', error);
       handleAPIError(error);
     } finally {
       setDeletePromptId(null);
     }
   };
+
 
   const handleAPIError = (error) => {
     let errorMessage = 'An unexpected error occurred';
@@ -227,7 +253,7 @@ function PromptManager({ accessToken }) {
               </TableRow>
             ) : (
               prompts.map((prompt) => (
-                <TableRow key={prompt.id}>
+                <TableRow key={prompt.pk}>
                   <TableCell>{prompt.role}</TableCell>
                   <TableCell>
                     <Typography
@@ -261,6 +287,7 @@ function PromptManager({ accessToken }) {
                     <Tooltip title="Edit">
                       <IconButton 
                         onClick={() => {
+                          console.log('Edit prompt object:', prompt);
                           setCurrentPrompt(prompt);
                           setIsEditing(true);
                           setOpenDialog(true);
@@ -272,7 +299,11 @@ function PromptManager({ accessToken }) {
                     </Tooltip>
                     <Tooltip title="Delete">
                       <IconButton 
-                        onClick={() => setDeletePromptId(prompt.id)}
+                        onClick={() => {
+                          // Use pk instead of id
+                          const promptId = prompt.pk || prompt.id;
+                          setDeletePromptId(promptId);
+                        }}
                         color="error"
                         size="small"
                       >

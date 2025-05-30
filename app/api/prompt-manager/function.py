@@ -74,15 +74,19 @@ async def create_prompt(event, context):
         return create_api_response(500, {'detail': str(e)})
 
 async def update_prompt(event, context):
-    """PUT method for /prompts/{prompt_id}"""
+    """PUT method for /prompts?prompt_id=xxx"""
     LOGGER.info("Received update prompt request")
 
     try:
         if event.get('httpMethod') == 'OPTIONS':
             return create_api_response(200, {})
 
-        # Get path parameters
-        prompt_id = event['pathParameters']['prompt_id']
+        # Get query parameters
+        query_params = event.get('queryStringParameters') or {}
+        prompt_id = query_params.get('prompt_id')
+
+        if not prompt_id:
+            return create_api_response(400, {'detail': 'No prompt_id found in request'})
 
         # Parse request body
         body = event.get('body')
@@ -100,24 +104,30 @@ async def update_prompt(event, context):
     except ValueError as ve:
         return create_api_response(404, {'detail': str(ve)})
     except Exception as e: # pylint: disable=broad-except
-        LOGGER.error("Error: %s", str(e))
+        LOGGER.error("Error updating prompt: %s", str(e))
         return create_api_response(500, {'detail': str(e)})
 
 async def delete_prompt(event, context):
-    """DELETE method for /prompts/{prompt_id}"""
+    """DELETE method for /prompts?prompt_id=xxx"""
     LOGGER.info("Received delete prompt request")
 
     try:
         if event.get('httpMethod') == 'OPTIONS':
             return create_api_response(200, {})
 
-        prompt_id = event['pathParameters']['prompt_id']
+        # Get query parameters
+        query_params = event.get('queryStringParameters') or {}
+        prompt_id = query_params.get('prompt_id')
+
+        if not prompt_id:
+            return create_api_response(400, {'detail': 'No prompt_id found in request'})
+
         await MANAGER.delete_prompt(prompt_id)
         return create_api_response(200, {'message': 'Prompt deleted'})
     except ValueError as ve:
         return create_api_response(404, {'detail': str(ve)})
     except Exception as e: # pylint: disable=broad-except
-        LOGGER.error("Error: %s", str(e))
+        LOGGER.error("Error deleting prompt: %s", str(e))
         return create_api_response(500, {'detail': str(e)})
 
 def handler(event, context):

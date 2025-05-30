@@ -309,21 +309,31 @@ class DynamoDBService:
             logger.error(f"Error in get_verifications: {repr(e)}", exc_info=True)
             raise
 
+    async def deactivate_prompt(self, prompt_id: str):
+        """Deactivate a prompt without optimistic locking"""
+        try:
+            prompt = await self.get_prompt(prompt_id)
+            if prompt and prompt.get('is_active'):
+                prompt['is_active'] = False
+                prompt['updated_at'] = datetime.now(timezone.utc).isoformat()
+                # Direct put_item without conditional expression
+                self.prompts_table.put_item(Item=prompt)
+                logger.info(f"Successfully deactivated prompt {prompt_id}")
+        except Exception as e:
+            logger.error(f"Error deactivating prompt: {repr(e)}")
+            raise
+
     async def _deactivate_other_prompts(self, current_prompt_id: Optional[str] = None):
-        """Helper method to deactivate all prompts except the current one using batch operations"""
+        """Helper method to deactivate all prompts except the current one"""
         try:
             response = self.prompts_table.scan(
                 FilterExpression='is_active = :true',
                 ExpressionAttributeValues={':true': True}
             )
 
-            current_time = datetime.now(timezone.utc).isoformat()
-            with self.prompts_table.batch_writer() as batch:
-                for prompt in response.get('Items', []):
-                    if prompt['pk'] != current_prompt_id:
-                        prompt['is_active'] = False
-                        prompt['updated_at'] = current_time
-                        batch.put_item(Item=prompt)
+            for prompt in response.get('Items', []):
+                if prompt['pk'] != current_prompt_id:
+                    await self.deactivate_prompt(prompt['pk'])
 
             logger.info(f"Successfully deactivated other prompts except {repr(current_prompt_id)}")
         except Exception as e:
@@ -353,6 +363,24 @@ class DynamoDBService:
             return items
         except Exception as e:
             logger.error(f"Error getting prompts: {repr(e)}")
+            raise
+
+    async def get_prompt(self, prompt_id: str) -> Dict:
+        """Get a specific prompt by ID"""
+        try:
+            logger.info(f"Getting prompt with id: {prompt_id}")
+            response = self.prompts_table.get_item(
+                Key={'pk': prompt_id}
+            )
+
+            item = response.get('Item')
+            if not item:
+                logger.warning(f"Prompt with id {prompt_id} not found")
+                return None
+
+            return item
+        except Exception as e:
+            logger.error(f"Error getting prompt: {repr(e)}")
             raise
 
     async def save_prompt(self, prompt: Dict) -> Dict:
@@ -387,38 +415,24 @@ class DynamoDBService:
             logger.error(f"Error saving prompt: {repr(e)}")
             raise
 
-    async def update_prompt(self, prompt: Dict) -> Dict:
-        """Update an existing prompt with optimistic locking"""
+    async def update_prompt_without_locking(self, prompt_data: Dict) -> Dict:
+        """Update an existing prompt without optimistic locking"""
         try:
             timestamp = datetime.now(timezone.utc).isoformat()
             item = {
-                'pk': prompt['pk'],
-                'role': prompt['role'],
-                'tasks': prompt['tasks'],
-                'is_active': prompt['is_active'],
-                'created_at': prompt.get('created_at'),
+                'pk': prompt_data['pk'],
+                'role': prompt_data['role'],
+                'tasks': prompt_data['tasks'],
+                'is_active': prompt_data['is_active'],
+                'created_at': prompt_data.get('created_at'),
                 'updated_at': timestamp
             }
 
-            if prompt['is_active']:
-                await self._deactivate_other_prompts(prompt['pk'])
-
-            logger.info(f"Updating prompt with id: {item['pk']}")
-            self.prompts_table.put_item(
-                Item=item,
-                ConditionExpression='attribute_exists(pk) AND updated_at = :old_timestamp',
-                ExpressionAttributeValues={
-                    ':old_timestamp': prompt.get('updated_at')
-                }
-            )
+            logger.info(f"Updating prompt without locking, id: {item['pk']}")
+            self.prompts_table.put_item(Item=item)
             return item
-        except ClientError as e:
-            if e.response['Error']['Code'] == 'ConditionalCheckFailedException':
-                raise ValueError("Prompt was updated by another process")
-            logger.error(f"Error updating prompt: {repr(e)}")
-            raise
         except Exception as e:
-            logger.error(f"Error updating prompt: {repr(e)}")
+            logger.error(f"Error updating prompt without locking: {repr(e)}")
             raise
 
     async def delete_prompt(self, prompt_id: str):
