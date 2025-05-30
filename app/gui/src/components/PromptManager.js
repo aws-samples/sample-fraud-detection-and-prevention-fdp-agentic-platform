@@ -112,8 +112,8 @@ function PromptManager({ accessToken }) {
           return;
         }
 
-        // Use the apiPut function that works for GET
-        await apiPut(`/prompts/${promptId}`, accessToken, {
+        // Use query parameter instead of path parameter
+        await apiPut(`/prompts?prompt_id=${promptId}`, accessToken, {
           body: currentPrompt
         });
 
@@ -148,8 +148,8 @@ function PromptManager({ accessToken }) {
     try {
       console.log('Deleting prompt with ID:', deletePromptId);
 
-      // Use the apiDelete function that works for GET
-      await apiDelete(`/prompts/${deletePromptId}`, accessToken);
+      // Use query parameter instead of path parameter
+      await apiDelete(`/prompts?prompt_id=${deletePromptId}`, accessToken);
 
       setSnackbar({
         open: true,
@@ -164,7 +164,6 @@ function PromptManager({ accessToken }) {
       setDeletePromptId(null);
     }
   };
-
 
   const handleAPIError = (error) => {
     let errorMessage = 'An unexpected error occurred';

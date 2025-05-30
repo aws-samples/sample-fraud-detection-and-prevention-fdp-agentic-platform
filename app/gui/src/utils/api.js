@@ -18,9 +18,9 @@ export const apiGet = async (path, token = '', options = {}, apiName = 'secureAp
     const response = await fetch(fullUrl, {
       method: 'GET',
       headers: {
+        ...options.headers,
         'Authorization': `Bearer ${authToken}`,
-        'Content-Type': 'application/json',
-        ...options.headers
+        'Content-Type': 'application/json'
       }
     });
 
@@ -51,9 +51,9 @@ export const apiPost = async (path, token = '', options = {}, apiName = 'secureA
     const response = await fetch(fullUrl, {
       method: 'POST',
       headers: {
+        ...options.headers,
         'Authorization': `Bearer ${authToken}`,
-        'Content-Type': 'application/json',
-        ...options.headers
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify(options.body || {})
     });
@@ -86,9 +86,9 @@ export const apiPut = async (path, token = '', options = {}, apiName = 'secureAp
     const response = await fetch(fullUrl, {
       method: 'PUT',
       headers: {
+        ...options.headers,
         'Authorization': `Bearer ${authToken}`,
-        'Content-Type': 'application/json',
-        ...options.headers
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify(options.body || {})
     });
@@ -121,9 +121,9 @@ export const apiDelete = async (path, token = '', options = {}, apiName = 'secur
     const response = await fetch(fullUrl, {
       method: 'DELETE',
       headers: {
+        ...options.headers,
         'Authorization': `Bearer ${authToken}`,
-        'Content-Type': 'application/json',
-        ...options.headers
+        'Content-Type': 'application/json'
       }
     });
 
