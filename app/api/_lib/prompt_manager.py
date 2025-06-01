@@ -49,11 +49,17 @@ class PromptManager:
             prompt_data['updated_at'] = datetime.now(timezone.utc).isoformat()
             prompt_data['created_at'] = existing_prompt.get('created_at')
 
-            # If this prompt is being set as active, deactivate others
+            # If this prompt is being set as active, deactivate others directly
             if prompt_data.get('is_active'):
-                await self._deactivate_other_prompts(exclude_id=prompt_id)
+                # Get all active prompts
+                prompts = await self.db_service.get_prompts()
+                for prompt in prompts:
+                    if prompt.get('is_active') and prompt.get('pk') != prompt_id:
+                        # Deactivate directly without optimistic locking
+                        await self.db_service.deactivate_prompt(prompt.get('pk'))
 
-            return await self.db_service.update_prompt(prompt_data)
+            # Use update_prompt_without_locking instead of update_prompt
+            return await self.db_service.update_prompt_without_locking(prompt_data)
         except Exception as e:
             self.logger.error("Error updating prompt: %s", str(e))
             raise
@@ -92,9 +98,8 @@ class PromptManager:
             prompts = await self.db_service.get_prompts()
             for prompt in prompts:
                 if prompt.get('is_active') and prompt.get('pk') != exclude_id:
-                    prompt['is_active'] = False
-                    prompt['updated_at'] = datetime.now(timezone.utc).isoformat()
-                    await self.db_service.update_prompt(prompt)
+                    # Use deactivate_prompt instead of update_prompt to avoid optimistic locking
+                    await self.db_service.deactivate_prompt(prompt.get('pk'))
         except Exception as e:
             self.logger.error("Error deactivating prompts: %s", str(e))
             raise

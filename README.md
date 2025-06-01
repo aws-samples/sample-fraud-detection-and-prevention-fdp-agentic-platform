@@ -96,6 +96,14 @@ aws codebuild start-build --region us-east-1 \
     --environment-variables-override FDP_DIR=iac/gui
 ```
 
+After successful execution, build and deploy the application code:
+
+```sh
+aws codebuild start-build --region us-east-1 \
+    --project-name fdp-cicd-pipeline-abcd1234 \
+    --environment-variables-override FDP_DIR=app/gui
+```
+
 > REMINDER: Make sure to replace *us-east-1* with your target AWS region and
 *fdp-cicd-pipeline-abcd1234* with the value from the previous section.
 
