@@ -48,11 +48,29 @@ class DocumentAnalyzer:
 
     async def get_verifications(self):
         """Retrieve all verifications"""
-        raw_verifications = await self.db_service.get_verifications()
-        return [
-            self._process_verification(verification)
-            for verification in raw_verifications
-        ]
+        try:
+            self.logger.info("Calling db_service.get_verifications()")
+            raw_verifications = await self.db_service.get_verifications()
+
+            self.logger.info(f"Raw verifications type: {type(raw_verifications)}")
+            self.logger.info(f"Raw verifications value: {raw_verifications}")
+
+            # Handle case where get_verifications returns None
+            if raw_verifications is None:
+                self.logger.warning("No verifications found, returning empty list")
+                return []
+
+            result = []
+            for verification in raw_verifications:
+                self.logger.info(f"Processing verification: {verification}")
+                processed = self._process_verification(verification)
+                result.append(processed)
+
+            return result
+        except Exception as e:
+            self.logger.error(f"Error in get_verifications: {str(e)}", exc_info=True)
+            # Return empty list on error to avoid breaking the API
+            return []
 
     async def get_verification(self, verification_id: str):
         """Retrieve specific verification"""
@@ -64,8 +82,17 @@ class DocumentAnalyzer:
     async def _get_inference_configs(self):
         """Get and process inference configurations"""
         configs = await self.db_service.get_configurations('INFERENCE_PARAMS')
+        if not configs:
+            # Return default values if no configurations found
+            return {
+                'max_new_tokens': 3000,
+                'top_p': 0.1,
+                'top_k': 20,
+                'temperature': 0.3
+            }
+
         return {
-            config['key']: float(config['value'])
+            config['sk']: float(config['value'])
             for config in configs
         }
 
@@ -133,12 +160,22 @@ class DocumentAnalyzer:
 
     def _process_verification(self, verification):
         """Process a verification record for response"""
-        if isinstance(verification.get('confidence'), Decimal):
-            verification['confidence'] = float(verification['confidence'])
+        if verification is None:
+            self.logger.warning("Received None verification to process")
+            return {}
 
-        if verification.get('file_key'):
-            verification['preview_url'] = self.s3_service.get_presigned_url(
-                verification['file_key']
-            )
+        result = dict(verification)
 
-        return verification
+        if isinstance(result.get('confidence'), Decimal):
+            result['confidence'] = float(result['confidence'])
+
+        if result.get('file_key'):
+            try:
+                result['preview_url'] = self.s3_service.get_presigned_url(
+                    result['file_key']
+                )
+            except Exception as e:
+                self.logger.error(f"Error generating preview URL: {str(e)}")
+                result['preview_url'] = None
+
+        return result

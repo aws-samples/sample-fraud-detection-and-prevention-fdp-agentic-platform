@@ -104,6 +104,19 @@ data "aws_iam_policy_document" "this" {
       "${data.terraform_remote_state.s3.outputs.arn}/*",
     ]
   }
+
+  statement {
+    effect  = "Allow"
+    actions = [
+      "bedrock:InvokeModel",
+    ]
+    resources = [format(
+      "arn:%s:bedrock:%s:%s:foundation-model/*",
+      data.aws_partition.this.id,
+      data.aws_region.this.name,
+      data.aws_caller_identity.this.account_id,
+    )]
+  }
 }
 
 data "aws_secretsmanager_secret" "this" {

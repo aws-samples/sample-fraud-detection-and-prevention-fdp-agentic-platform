@@ -252,7 +252,7 @@ class DynamoDBService:
 
             # Create item for DynamoDB
             item = {
-                'pk': verification_data.get('id'),
+                'pk': verification_data.get('pk'),
                 'timestamp': timestamp,
                 'document_type': verification_data.get('document_type'),
                 'confidence': confidence,
@@ -305,7 +305,7 @@ class DynamoDBService:
             processed_items = []
             for item in items:
                 processed_item = {
-                    'pk': item.get('id'),
+                    'pk': item.get('pk'),
                     'timestamp': item.get('timestamp'),
                     'document_type': item.get('document_type'),
                     'confidence': float(item.get('confidence', 0)),
@@ -329,6 +329,24 @@ class DynamoDBService:
 
         except Exception as e:
             logger.error(f"Error in get_verifications: {repr(e)}", exc_info=True)
+            raise
+
+    async def get_verification(self, verification_id: str) -> Dict:
+        """Get a specific verification by ID"""
+        try:
+            logger.info(f"Getting verification with id: {verification_id}")
+            response = self.verifications_table.get_item(
+                Key={'pk': verification_id}
+            )
+
+            item = response.get('Item')
+            if not item:
+                logger.warning(f"Verification with id {verification_id} not found")
+                return None
+
+            return item
+        except Exception as e:
+            logger.error(f"Error getting verification: {repr(e)}")
             raise
 
     async def deactivate_prompt(self, prompt_id: str):
