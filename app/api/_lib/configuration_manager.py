@@ -29,7 +29,7 @@ class ConfigurationManager:
             # Validate configuration exists
             existing_configs = await self.db_service.get_configurations(config_data['pk'])
             existing_config = next(
-                (c for c in existing_configs if c['key'] == config_data['key']),
+                (c for c in existing_configs if c['sk'] == config_data['sk']),
                 None
             )
 
@@ -44,10 +44,11 @@ class ConfigurationManager:
             if config_data.get('is_active'):
                 await self._handle_config_activation(
                     config_data['pk'],
-                    config_data['key']
+                    config_data['sk']
                 )
 
-            return await self.db_service.update_configuration(config_data)
+            # Use update_configuration_without_locking to avoid optimistic locking issues
+            return await self.db_service.update_configuration_without_locking(config_data)
         except Exception as e:
             self.logger.error(f"Error updating configuration: {str(e)}")
             raise
@@ -62,7 +63,7 @@ class ConfigurationManager:
             if config_data.get('is_active'):
                 await self._handle_config_activation(
                     config_data['pk'],
-                    config_data['key']
+                    config_data['sk']
                 )
 
             return await self.db_service.save_configuration(config_data)
@@ -81,10 +82,11 @@ class ConfigurationManager:
 
             # Deactivate other configurations of the same type
             for config in configs:
-                if config['key'] != config_key and config.get('is_active'):
+                if config['sk'] != config_key and config.get('is_active'):
                     config['is_active'] = False
                     config['updated_at'] = datetime.now(timezone.utc).isoformat()
-                    await self.db_service.update_configuration(config)
+                    # Use update_configuration_without_locking to avoid optimistic locking issues
+                    await self.db_service.update_configuration_without_locking(config)
 
             self.logger.info(f"Activated configuration {config_key} in group {config_id}")
         except Exception as e:
@@ -94,7 +96,7 @@ class ConfigurationManager:
     async def get_active_model_config(self):
         """Get active model configuration"""
         try:
-            configs = await self.db_service.get_configurations('MODEL_CONFIG')
+            configs = await self.db_service.get_configurations('MODEL_IDS')
             return next(
                 (c for c in configs if c.get('is_active')),
                 None

@@ -115,6 +115,21 @@ class DynamoDBService:
             table = self.dynamodb.Table(self.configs_table_name)
             table.meta.client.describe_table(TableName=self.configs_table_name)
             logger.info(f"Configs table exists: {self.configs_table_name}")
+            
+            # Check if the table is empty and initialize if needed
+            response = table.query(
+                KeyConditionExpression='pk = :pk',
+                ExpressionAttributeValues={':pk': 'MODEL_IDS'},
+                Limit=1
+            )
+            
+            if not response.get('Items'):
+                logger.info("Configs table is empty, initializing with default values")
+                # Store the table reference first
+                self.configs_table = table
+                # Then initialize
+                self.initialize_default_configs()
+            
             return table
         except ClientError as e:
             if e.response['Error']['Code'] == 'ResourceNotFoundException':
@@ -127,13 +142,17 @@ class DynamoDBService:
                             'KeyType': 'HASH'
                         },
                         {
-                            'AttributeName': 'key',
+                            'AttributeName': 'sk',
                             'KeyType': 'RANGE'
                         }
                     ],
                     AttributeDefinitions=[
                         {
                             'AttributeName': 'pk',
+                            'AttributeType': 'S'
+                        },
+                        {
+                            'AttributeName': 'sk',
                             'AttributeType': 'S'
                         }
                     ],
@@ -143,13 +162,16 @@ class DynamoDBService:
                 table.meta.client.get_waiter('table_exists').wait(TableName=self.configs_table_name)
                 logger.info(f"Configs table created successfully: {self.configs_table_name}")
 
-                # Initialize with default values
+                # Store the table reference first
+                self.configs_table = table
+                # Then initialize
                 self.initialize_default_configs()
                 return table
             else:
                 logger.error(f"Error checking/creating configs table: {repr(e)}")
                 raise
 
+    
     def initialize_default_configs(self):
         """Initialize the configs table with default values"""
         try:
@@ -157,21 +179,21 @@ class DynamoDBService:
             model_configs = [
                 {
                     'pk': 'MODEL_IDS',
-                    'key': 'MICRO',
+                    'sk': 'MICRO',
                     'value': 'amazon.nova-micro-v1:0',
                     'description': 'Micro Model ID',
                     'is_active': False
                 },
                 {
                     'pk': 'MODEL_IDS',
-                    'key': 'LITE',
+                    'sk': 'LITE',
                     'value': 'amazon.nova-lite-v1:0',
                     'description': 'Lite Model ID',
                     'is_active': True
                 },
                 {
                     'pk': 'MODEL_IDS',
-                    'key': 'PRO',
+                    'sk': 'PRO',
                     'value': 'amazon.nova-pro-v1:0',
                     'description': 'Pro Model ID',
                     'is_active': False
@@ -182,25 +204,25 @@ class DynamoDBService:
             inference_configs = [
                 {
                     'pk': 'INFERENCE_PARAMS',
-                    'key': 'max_new_tokens',
+                    'sk': 'max_new_tokens',
                     'value': '3000',
                     'description': 'Maximum number of new tokens'
                 },
                 {
                     'pk': 'INFERENCE_PARAMS',
-                    'key': 'top_p',
+                    'sk': 'top_p',
                     'value': '0.1',
                     'description': 'Top P value'
                 },
                 {
                     'pk': 'INFERENCE_PARAMS',
-                    'key': 'top_k',
+                    'sk': 'top_k',
                     'value': '20',
                     'description': 'Top K value'
                 },
                 {
                     'pk': 'INFERENCE_PARAMS',
-                    'key': 'temperature',
+                    'sk': 'temperature',
                     'value': '0.3',
                     'description': 'Temperature value'
                 }
@@ -486,10 +508,15 @@ class DynamoDBService:
             logger.error(f"Error getting configurations: {repr(e)}")
             raise
 
-    async def update_configuration(self, config: Configuration):
+    async def update_configuration(self, config):
         """Update a configuration value with optimistic locking"""
         try:
-            config_dict = config.dict()
+            # Check if config is a dict or a Pydantic model
+            if hasattr(config, 'dict'):
+                config_dict = config.dict()
+            else:
+                config_dict = config  # Already a dict
+                
             current_time = datetime.now(timezone.utc).isoformat()
             config_dict['updated_at'] = current_time
 
@@ -516,6 +543,26 @@ class DynamoDBService:
             logger.error(f"Error updating configuration: {repr(e)}")
             raise
 
+    async def save_configuration(self, config):
+        """Save a new configuration"""
+        try:
+            # Check if config is a dict or a Pydantic model
+            if hasattr(config, 'dict'):
+                config_dict = config.dict()
+            else:
+                config_dict = config  # Already a dict
+                
+            current_time = datetime.now(timezone.utc).isoformat()
+            if 'created_at' not in config_dict:
+                config_dict['created_at'] = current_time
+            config_dict['updated_at'] = current_time
+
+            self.configs_table.put_item(Item=config_dict)
+            return config_dict
+        except Exception as e:
+            logger.error(f"Error saving configuration: {repr(e)}")
+            raise
+
     @lru_cache(maxsize=1)
     async def get_active_model_config(self):
         """Get the currently active model configuration with caching"""
@@ -533,11 +580,11 @@ class DynamoDBService:
             if not items:
                 # If no active model, return the LITE model as default
                 response = self.configs_table.query(
-                    KeyConditionExpression='pk = :pk AND #key = :key',
-                    ExpressionAttributeNames={'#key': 'key'},
+                    KeyConditionExpression='pk = :pk AND #sk = :sk',
+                    ExpressionAttributeNames={'#sk': 'sk'},
                     ExpressionAttributeValues={
                         ':pk': 'MODEL_IDS',
-                        ':key': 'LITE'
+                        ':sk': 'LITE'
                     }
                 )
                 return response['Items'][0] if response['Items'] else None
