@@ -87,7 +87,7 @@ function DocumentAnalyzer({ accessToken }) {
         // Add data validation
         const validatedData = data.map(doc => ({
           ...doc,
-          id: doc.id || `temp-${Date.now()}`,
+          id: doc.pk || `temp-${Date.now()}`,
           confidence: Number(doc.confidence),
           preview_url: doc.preview_url || '',
           document_type: doc.document_type || 'Unknown',
@@ -147,8 +147,9 @@ function DocumentAnalyzer({ accessToken }) {
     try {
       const base64Image = preview.split(',')[1];
       const data = await apiPost('/verifications', accessToken, {
-        options: { body: { image_base64: base64Image } }
+        body: { image_base64: base64Image }
       });
+
       console.log('Analyzer data:', data);
 
       const processedResponse = {
@@ -164,7 +165,7 @@ function DocumentAnalyzer({ accessToken }) {
       setPreview(null);
     } catch (error) {
       console.error('Error:', error);
-      setError(error.response?.data?.message || 'An error occurred during analysis');
+      setError(error.response?.data?.detail || error.response?.data?.message || 'An error occurred during analysis');
     } finally {
       setLoading(false);
     }
@@ -359,7 +360,7 @@ function DocumentAnalyzer({ accessToken }) {
                   </TableHead>
                   <TableBody>
                     {analyzedDocuments.map((doc) => (
-                      <TableRow key={doc.id}>
+                      <TableRow key={doc.pk}>
                         <TableCell>
                           <img
                             src={doc.preview_url}

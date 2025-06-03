@@ -5,13 +5,17 @@
 import json
 import logging
 import os
+import uuid
 import boto3
+from datetime import datetime, timezone
+from decimal import Decimal
 from dotenv import load_dotenv
 from lib.utils import create_api_response
 from lib.dynamodb import DynamoDBService
 from lib.s3 import S3Service
 from lib.models import DocumentAnalysisRequest
 from lib.document_analyzer import DocumentAnalyzer
+import asyncio
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -73,6 +77,7 @@ async def create_verifications(event, context):
         LOGGER.error("Error: %s", str(e))
         return create_api_response(500, {'detail': str(e)})
 
+
 async def get_verifications(event, context):
     """GET method for /verifications"""
     LOGGER.info("Received get verifications request")
@@ -81,12 +86,22 @@ async def get_verifications(event, context):
         if event.get('httpMethod') == 'OPTIONS':
             return create_api_response(200, {})
 
-        if 'pathParameters' in event and 'verification_id' in event['pathParameters']:
-            verification_id = event['pathParameters']['verification_id']
+        # Check for verification_id in query parameters
+        query_params = event.get('queryStringParameters') or {}
+        verification_id = query_params.get('verification_id')
+
+        if verification_id:
+            LOGGER.info(f"Getting verification with ID: {verification_id}")
             result = await MANAGER.get_verification(verification_id)
+            if result is None:
+                return create_api_response(404, {'detail': 'Verification not found'})
+            return create_api_response(200, result)
         else:
+            # Get all verifications
             result = await MANAGER.get_verifications()
-        return create_api_response(200, result)
+            if result is None:
+                result = []
+            return create_api_response(200, result)
 
     except ValueError as ve:
         return create_api_response(404, {'detail': str(ve)})
@@ -102,13 +117,23 @@ def handler(event, context):
     http_method = event['httpMethod']
     path = event['path']
 
-    # Route requests to appropriate handler
-    if http_method == 'GET' and path.startswith('/verifications'):
-        return get_verifications(event, context)
-    if http_method == 'POST' and path.startswith('/verifications'):
-        return create_verifications(event, context)
+    # Create a new event loop for each request
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
 
-    return create_api_response(404, {'detail': 'Not Found'})
+    try:
+        # Route requests to appropriate handler
+        if http_method == 'GET' and path.startswith('/verifications'):
+            result = loop.run_until_complete(get_verifications(event, context))
+            return result
+        if http_method == 'POST' and path.startswith('/verifications'):
+            result = loop.run_until_complete(create_verifications(event, context))
+            return result
 
-if __name__ == '__main__':
-    handler(event=None, context=None)
+        return create_api_response(404, {'detail': 'Not Found'})
+    except Exception as e:
+        LOGGER.error("Error processing request: %s", str(e), exc_info=True)
+        return create_api_response(500, {'detail': str(e)})
+    finally:
+        # Clean up the event loop
+        loop.close()

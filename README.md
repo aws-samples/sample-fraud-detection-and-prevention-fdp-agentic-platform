@@ -42,6 +42,8 @@ and [AWS CodeBuild project](https://docs.aws.amazon.com/codebuild/latest/usergui
 [AWSCodeBuildAdminAccess](https://docs.aws.amazon.com/aws-managed-policy/latest/reference/AWSCodeBuildAdminAccess.html))
 * an [Amazon Simple Storage Service (S3) bucket](https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html)
 used by terraform remote state (e.g. *fdp-backend-us-east-1*)
+* enabled [Amazon Nova](https://nova.amazon.com) models in
+[Amazon Bedrock](https://docs.aws.amazon.com/nova/latest/userguide/getting-started-console.html)
 
 ### Deploy CI/CD Module
 
