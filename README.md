@@ -95,7 +95,7 @@ Similar to previous section, use the CI/CD pipeline to deploy the GUI module:
 ```sh
 aws codebuild start-build --region us-east-1 \
     --project-name fdp-cicd-pipeline-abcd1234 \
-    --environment-variables-override FDP_DIR=iac/gui
+    --environment-variables-override "name=FDP_DIR,value=iac/gui"
 ```
 
 After successful execution, build and deploy the application code:
@@ -103,7 +103,7 @@ After successful execution, build and deploy the application code:
 ```sh
 aws codebuild start-build --region us-east-1 \
     --project-name fdp-cicd-pipeline-abcd1234 \
-    --environment-variables-override FDP_DIR=app/gui
+    --environment-variables-override "name=FDP_DIR,value=app/gui"
 ```
 
 > REMINDER: Make sure to replace *us-east-1* with your target AWS region and
