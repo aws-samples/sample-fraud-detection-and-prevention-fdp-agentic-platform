@@ -13,9 +13,9 @@ locals {
   )
   attributes = [{
     name = var.q.hash_key
-    type = "S"
+    type = var.q.hash_type
     }, {
     name = var.q.range_key
-    type = "S"
+    type = var.q.range_type
   }]
 }
