@@ -3,7 +3,7 @@
 
 q = {
   hash_key     = "pk"
-  range_key    = null # "sk"
+  range_key    = "sk"
   billing_mode = "PAY_PER_REQUEST"
 
   stream_enabled         = true
@@ -17,10 +17,13 @@ q = {
 r = [{
   key  = "agent"
   name = "ftp-agent"
+  attr = "pk"
   }, {
   key  = "config"
   name = "fdp-config"
+  attr = "pk,sk"
   }, {
   key  = "prompt"
   name = "fdp-prompt"
+  attr = "pk"
 }]
