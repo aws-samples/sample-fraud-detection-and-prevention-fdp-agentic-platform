@@ -6,17 +6,16 @@ resource "aws_dynamodb_table" "this" {
   #checkov:skip=CKV_AWS_119:This solution leverages KMS encryption using AWS managed keys instead of CMKs (false positive)
   #checkov:skip=CKV2_AWS_16:This solution does not leverages DynamoDB auto-scaling capabilities (false positive)
 
-  count        = data.aws_region.this.name == element(keys(var.fdp_backend_bucket), 0) ? length(var.r) : 0
-  name         = format("%s-%s", var.r[count.index]["name"], local.fdp_gid)
-  hash_key     = var.q.hash_key
-  range_key    = var.q.range_key
-  billing_mode = var.q.billing_mode
-
+  count            = data.aws_region.this.name == element(keys(var.fdp_backend_bucket), 0) ? length(var.r) : 0
+  name             = format("%s-%s", var.r[count.index]["name"], local.fdp_gid)
+  hash_key         = strcontains(var.r[count.index]["attr"], var.q.hash_key) ? var.q.hash_key : null
+  range_key        = strcontains(var.r[count.index]["attr"], var.q.range_key) ? var.q.range_key : null
+  billing_mode     = var.q.billing_mode
   stream_enabled   = var.q.stream_enabled
   stream_view_type = var.q.stream_view_type
 
   dynamic "attribute" {
-    for_each = local.attributes
+    for_each = [for attr in local.attributes : attr if strcontains(var.r[count.index]["attr"], attr.name)]
     content {
       name = attribute.value.name
       type = attribute.value.type

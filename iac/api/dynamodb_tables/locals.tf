@@ -11,14 +11,11 @@ locals {
     && data.aws_region.this.name == element(keys(var.fdp_backend_bucket), 0)
     ? [data.terraform_remote_state.s3.outputs.region2] : []
   )
-  attributes = [
-    {
-      name = "pk"
-      type = "S"
-    },
-    # {
-    #   name = "sk"
-    #   type = "S"
-    # },
-  ]
+  attributes = [{
+    name = var.q.hash_key
+    type = var.q.hash_type
+    }, {
+    name = var.q.range_key
+    type = var.q.range_type
+  }]
 }
