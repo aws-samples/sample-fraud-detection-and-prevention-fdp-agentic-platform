@@ -9,6 +9,7 @@ from lib.utils import create_api_response
 from lib.dynamodb import DynamoDBService
 from lib.models import Configuration
 from lib.configuration_manager import ConfigurationManager
+import asyncio
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -31,19 +32,28 @@ SERVICES = initialize_services()
 MANAGER = ConfigurationManager(SERVICES, LOGGER)
 
 async def get_configurations(event, context):
-    """GET method for /configurations/{config_id}"""
+    """GET method for /configurations"""
     LOGGER.info("Received get configurations request")
 
     try:
         if event.get('httpMethod') == 'OPTIONS':
             return create_api_response(200, {})
 
-        config_id = event['pathParameters']['config_id']
+        # Get config_id from path parameters or query parameters
+        path_params = event.get('pathParameters') or {}
+        query_params = event.get('queryStringParameters') or {}
+        
+        config_id = path_params.get('config_id') or query_params.get('config_id')
+        
+        if not config_id:
+            return create_api_response(400, {'detail': 'No config_id found in request'})
+
         results = await MANAGER.get_configurations(config_id)
         return create_api_response(200, results)
     except Exception as e: # pylint: disable=broad-except
         LOGGER.error("Error: %s", str(e))
         return create_api_response(500, {'detail': str(e)})
+
 
 async def update_configuration(event, context):
     """PUT method for /configurations"""
@@ -109,18 +119,29 @@ def handler(event, context):
     # Get HTTP method and path
     http_method = event['httpMethod']
     path = event['path']
+    query_params = event.get('queryStringParameters') or {}
+    action = query_params.get('action')
 
-    # Route requests to appropriate handler
-    if http_method == 'GET' and path.startswith('/configurations/model/active'):
-        return get_active_model(event, context)
-    if http_method == 'GET' and path.startswith('/configurations/inference-params'):
-        return get_inference_params(event, context)
-    if http_method == 'GET' and path.startswith('/configurations'):
-        return get_configurations(event, context)
-    if http_method == 'PUT' and path.startswith('/configurations'):
-        return update_configuration(event, context)
+    # Create an event loop
+    loop = asyncio.get_event_loop()
 
-    return create_api_response(404, {'detail': 'Not Found'})
+    try:
+        # Route requests based on path and query parameters
+        if http_method == 'GET' and path.startswith('/configurations'):
+            if action == 'get_active_model':
+                return loop.run_until_complete(get_active_model(event, context))
+            elif action == 'get_inference_params':
+                return loop.run_until_complete(get_inference_params(event, context))
+            else:
+                return loop.run_until_complete(get_configurations(event, context))
+        elif http_method == 'PUT' and path.startswith('/configurations'):
+            return loop.run_until_complete(update_configuration(event, context))
+
+        return create_api_response(404, {'detail': 'Not Found'})
+    except Exception as e:
+        LOGGER.error("Error processing request: %s", str(e))
+        return create_api_response(500, {'detail': str(e)})
+
 
 if __name__ == '__main__':
     handler(event=None, context=None)

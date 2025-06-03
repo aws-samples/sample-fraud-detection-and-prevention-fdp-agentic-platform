@@ -35,7 +35,7 @@ class Prompt(BaseModel):
 
 class Configuration(BaseModel):
     pk: str
-    key: str
+    sk: str
     value: str
     description: Optional[str] = None
     is_active: bool = False

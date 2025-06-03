@@ -33,8 +33,8 @@ function ConfigurationManager({ accessToken }) {
     console.log('Fetching configurations...', accessToken);
 
     try {
-      const modelResponse = await apiGet('/configurations/MODEL_IDS', accessToken);
-      const inferenceResponse = await apiGet('/configurations/INFERENCE_PARAMS', accessToken);
+      const modelResponse = await apiGet('/configurations?config_id=MODEL_IDS', accessToken);
+      const inferenceResponse = await apiGet('/configurations?config_id=INFERENCE_PARAMS', accessToken);
       setModelConfigs(modelResponse);
       setInferenceConfigs(inferenceResponse);
     } catch (error) {
@@ -49,19 +49,19 @@ function ConfigurationManager({ accessToken }) {
 
   const handleUpdate = async (config) => {
     try {
-      if (config.id === 'MODEL_IDS' && config.is_active) {
+      if (config.pk === 'MODEL_IDS' && config.is_active) {
         setModelConfigs(prevConfigs => 
           prevConfigs.map(modelConfig => ({
             ...modelConfig,
-            is_active: modelConfig.key === config.key
+            is_active: modelConfig.sk === config.sk
           }))
         );
 
         // Deactivate all other models in the backend
         const updates = modelConfigs.map(modelConfig => {
-          if (modelConfig.key !== config.key) {
+          if (modelConfig.sk !== config.sk) {
             return apiPut('/configurations', accessToken, {
-              options: { body: { ...modelConfig, is_active: false }}
+              body: { ...modelConfig, is_active: false }
             });
           }
           return Promise.resolve();
@@ -72,14 +72,15 @@ function ConfigurationManager({ accessToken }) {
 
       // Update the current config
       const data = await apiPut('/configurations', accessToken, {
-        options: { body: config }
+        body: config
       });
-      const config = await fetchConfigurations();
+      await fetchConfigurations();
     } catch (error) {
       handleAPIError(error);
       await fetchConfigurations();
     }
   };
+
 
   const handleAPIError = (error) => {
     console.error('API Error:', error);
@@ -119,7 +120,7 @@ function ConfigurationManager({ accessToken }) {
           <TableBody>
             {modelConfigs.map((config) => (
               <ConfigurationRow 
-                key={config.key} 
+                key={config.sk} 
                 config={config} 
                 onUpdate={handleUpdate}
                 isModelConfig={true}
@@ -145,7 +146,7 @@ function ConfigurationManager({ accessToken }) {
           <TableBody>
             {inferenceConfigs.map((config) => (
               <ConfigurationRow 
-                key={config.key} 
+                key={config.sk} 
                 config={config} 
                 onUpdate={handleUpdate}
                 isModelConfig={false}
@@ -167,8 +168,8 @@ function ConfigurationRow({ config, onUpdate, isModelConfig }) {
         setIsActive(config.is_active || false);
     }, [config.is_active]);
 
-    const getSliderConfig = (key) => {
-        switch (key) {
+    const getSliderConfig = (sk) => {
+        switch (sk) {
             case 'temperature':
             case 'top_p':
                 return {
@@ -227,7 +228,7 @@ function ConfigurationRow({ config, onUpdate, isModelConfig }) {
 
     const handleTextChange = (e) => {
         const newValue = e.target.value;
-        const sliderConfig = getSliderConfig(config.key);
+        const sliderConfig = getSliderConfig(config.sk);
         
         if (sliderConfig) {
             const numValue = Number(newValue);
@@ -239,12 +240,12 @@ function ConfigurationRow({ config, onUpdate, isModelConfig }) {
         }
     };
 
-    const isInferenceParam = ['temperature', 'top_p', 'top_k', 'max_new_tokens'].includes(config.key);
-    const sliderConfig = getSliderConfig(config.key);
+    const isInferenceParam = ['temperature', 'top_p', 'top_k', 'max_new_tokens'].includes(config.sk);
+    const sliderConfig = getSliderConfig(config.sk);
 
     return (
         <TableRow>
-            <TableCell>{config.key}</TableCell>
+            <TableCell>{config.sk}</TableCell>
             <TableCell>
                 {isEditing ? (
                     <Box sx={{ width: '100%' }}>
@@ -301,6 +302,6 @@ function ConfigurationRow({ config, onUpdate, isModelConfig }) {
             </TableCell>
         </TableRow>
     );
-} 
+}
 
 export default ConfigurationManager;
