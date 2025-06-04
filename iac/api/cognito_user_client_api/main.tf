@@ -11,10 +11,10 @@ resource "aws_cognito_user_pool_client" "this" {
   explicit_auth_flows                  = split(",", replace(replace(var.q.explicit_auth_flows, " ", ""), "\n", ""))
   supported_identity_providers         = split(",", var.q.supported_identity_providers)
 
-  callback_urls   = (
+  callback_urls   = coalesce(
     var.q.callback_url != null ? [var.q.callback_url] : null
   )
-  logout_urls     = (
+  logout_urls     = coalesce(
     var.q.callback_url != null ? ["${var.q.callback_url}/signout"] : null
   )
 

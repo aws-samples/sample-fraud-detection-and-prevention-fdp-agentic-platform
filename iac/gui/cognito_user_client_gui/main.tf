@@ -11,14 +11,14 @@ resource "aws_cognito_user_pool_client" "this" {
   explicit_auth_flows                  = split(",", replace(replace(var.q.explicit_auth_flows, " ", ""), "\n", ""))
   supported_identity_providers         = split(",", var.q.supported_identity_providers)
 
-  callback_urls   = (
+  callback_urls   = coalesce(
     data.terraform_remote_state.cloudfront.outputs.domain_name != null
-    ? ["https://${data.terraform_remote_state.cloudfront.outputs.domain_name}"]
+    ? ["https://${data.terraform_remote_state.cloudfront.outputs.domain_name}", "${var.q.callback_url}"]
     : var.q.callback_url != null ? [var.q.callback_url] : null
   )
-  logout_urls     = (
+  logout_urls     = coalesce(
     data.terraform_remote_state.cloudfront.outputs.domain_name != null
-    ? ["https://${data.terraform_remote_state.cloudfront.outputs.domain_name}/signout"]
+    ? ["https://${data.terraform_remote_state.cloudfront.outputs.domain_name}/signout", "${var.q.callback_url}/signout"]
     : var.q.callback_url != null ? ["${var.q.callback_url}/signout"] : null
   )
 

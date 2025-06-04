@@ -17,15 +17,14 @@ q = {
 
   allowed_oauth_flows_enabled  = true
   supported_identity_providers = "COGNITO"
-  allowed_oauth_flows          = "client_credentials"
+  allowed_oauth_flows          = "code"
   allowed_oauth_scopes         = <<EOF
-    fdp/read,fdp/write
+    aws.cognito.signin.user.admin,openid,
+    email,profile,fdp/read,fdp/write
   EOF
   explicit_auth_flows          = <<EOF
-    ALLOW_ADMIN_USER_PASSWORD_AUTH,
-    ALLOW_CUSTOM_AUTH,
     ALLOW_REFRESH_TOKEN_AUTH,
-    ALLOW_USER_PASSWORD_AUTH,
-    ALLOW_USER_SRP_AUTH
+    ALLOW_USER_SRP_AUTH,
+    ALLOW_CUSTOM_AUTH
   EOF
 }
