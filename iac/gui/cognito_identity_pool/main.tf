@@ -8,13 +8,13 @@ resource "aws_cognito_identity_pool" "this" {
 
   cognito_identity_providers {
     client_id               = data.terraform_remote_state.client.outputs.client_id
-    provider_name           = data.terraform_remote_state.client.outputs.user_pool_endpoint
+    provider_name           = replace(data.terraform_remote_state.client.outputs.user_pool_endpoint, "https://", "")
     server_side_token_check = var.q.server_side_token_check
   }
 
   cognito_identity_providers {
     client_id               = data.terraform_remote_state.client.outputs.api_client_id
-    provider_name           = data.terraform_remote_state.client.outputs.user_pool_endpoint
+    provider_name           = replace(data.terraform_remote_state.client.outputs.user_pool_endpoint, "https://", "")
     server_side_token_check = var.q.server_side_token_check
   }
 }
