@@ -21,9 +21,13 @@ resource "aws_cognito_user_pool_client" "this" {
   # read_attributes  = local.attributes
   # write_attributes = slice(local.attributes, 0, length(local.attributes) - 2)
 
-  generate_secret       = var.q.generate_secret
-  access_token_validity = var.q.access_token_validity
-  id_token_validity     = var.q.id_token_validity
+  enable_token_revocation       = true
+  prevent_user_existence_errors = "ENABLED"
+
+  generate_secret        = var.q.generate_secret
+  access_token_validity  = var.q.access_token_validity
+  id_token_validity      = var.q.id_token_validity
+  refresh_token_validity = var.q.refresh_token_validity
 
   token_validity_units {
     access_token  = var.q.access_token

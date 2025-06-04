@@ -26,29 +26,29 @@ describe('OIDC Configuration', () => {
     expect(oidcConfig).toHaveProperty('redirect_uri');
     expect(oidcConfig).toHaveProperty('response_type');
     expect(oidcConfig).toHaveProperty('scope');
-    expect(oidcConfig).toHaveProperty('metadata_url');
-    expect(oidcConfig).toHaveProperty('authority_configuration');
+    expect(oidcConfig).toHaveProperty('metadata');
+    expect(oidcConfig).toHaveProperty('extraTokenParameters');
   });
 
-  test('should have correct authority configuration endpoints', () => {
-    expect(oidcConfig.authority_configuration).toHaveProperty('authorization_endpoint');
-    expect(oidcConfig.authority_configuration).toHaveProperty('token_endpoint');
-    expect(oidcConfig.authority_configuration).toHaveProperty('userinfo_endpoint');
-    expect(oidcConfig.authority_configuration).toHaveProperty('end_session_endpoint');
+  test('should have correct metadata endpoints', () => {
+    expect(oidcConfig.metadata).toHaveProperty('authorization_endpoint');
+    expect(oidcConfig.metadata).toHaveProperty('token_endpoint');
+    expect(oidcConfig.metadata).toHaveProperty('userinfo_endpoint');
+    expect(oidcConfig.metadata).toHaveProperty('end_session_endpoint');
     
-    expect(oidcConfig.authority_configuration.authorization_endpoint)
+    expect(oidcConfig.metadata.authorization_endpoint)
       .toBe('https://auth.domain.com/oauth2/authorize');
-    expect(oidcConfig.authority_configuration.token_endpoint)
+    expect(oidcConfig.metadata.token_endpoint)
       .toBe('https://auth.domain.com/oauth2/token');
-    expect(oidcConfig.authority_configuration.userinfo_endpoint)
+    expect(oidcConfig.metadata.userinfo_endpoint)
       .toBe('https://cognito-idp.region.amazonaws.com/userPoolId/oauth2/userInfo');
-    expect(oidcConfig.authority_configuration.end_session_endpoint)
+    expect(oidcConfig.metadata.end_session_endpoint)
       .toBe('https://auth.domain.com/logout');
   });
 
-  test('should have correct metadata URL', () => {
-    expect(oidcConfig.metadata_url)
-      .toBe('https://cognito-idp.region.amazonaws.com/userPoolId/.well-known/openid-configuration');
+  test('should have correct extraTokenParameters', () => {
+    expect(oidcConfig.extraTokenParameters).toHaveProperty('client_id');
+    expect(oidcConfig.extraTokenParameters.client_id).toBe('test-client-id');
   });
 
   test('should have correct OAuth scopes', () => {
