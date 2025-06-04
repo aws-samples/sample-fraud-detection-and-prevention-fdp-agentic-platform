@@ -16,6 +16,11 @@ dependency "cognito" {
   skip_outputs = true
 }
 
+dependency "client" {
+  config_path  = "../cognito_user_client"
+  skip_outputs = true
+}
+
 dependency "domain" {
   config_path  = "../cognito_user_domain"
   skip_outputs = true

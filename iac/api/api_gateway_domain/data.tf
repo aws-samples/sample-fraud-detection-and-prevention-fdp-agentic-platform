@@ -40,6 +40,17 @@ data "terraform_remote_state" "cognito" {
   }
 }
 
+data "terraform_remote_state" "client" {
+  backend = "s3"
+  config = {
+    skip_region_validation = true
+
+    region = data.aws_region.this.name
+    bucket = var.fdp_backend_bucket[data.aws_region.this.name]
+    key    = format(var.fdp_backend_pattern, "cognito_user_client_api")
+  }
+}
+
 data "terraform_remote_state" "domain" {
   backend = "s3"
   config = {
