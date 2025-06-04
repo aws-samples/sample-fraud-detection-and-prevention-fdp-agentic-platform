@@ -9,7 +9,7 @@ q = {
   refresh_token   = "days"
   generate_secret = true
   secret_name     = "fdp-client-api"
-  callback_url    = "http://localhost:300"
+  callback_url    = "http://localhost:3000"
 
   access_token_validity = 480
   id_token_validity     = 480
