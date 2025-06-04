@@ -1,12 +1,8 @@
 # Copyright (C) Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: MIT-0
 
-output "api" {
-  value = aws_cognito_user_pool_client.api.id
-}
-
-output "web" {
-  value = aws_cognito_user_pool_client.web.id
+output "client_id" {
+  value = aws_cognito_user_pool_client.this.id
 }
 
 output "id" {

@@ -19,7 +19,6 @@ output "bucket_regional_domain_name" {
 
 output "bucket_logging" {
   value = data.terraform_remote_state.s3.outputs.bucket_domain_name
-  # value = format("%s.s3.amazonaws.com", var.fdp_backend_bucket[data.aws_region.this.name])
 }
 
 output "hosted_zone_id" {

@@ -4,6 +4,8 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
+import { AuthProvider } from "react-oidc-context";
+import { oidcConfig } from './utils/oidcConfig';
 
 // Enable React.lazy in development mode
 if (process.env.NODE_ENV === 'development') {
@@ -16,6 +18,8 @@ const container = document.getElementById('root');
 const root = createRoot(container);
 root.render(
   <React.StrictMode>
-    <App />
+    <AuthProvider {...oidcConfig}>
+      <App />
+    </AuthProvider>
   </React.StrictMode>
 );

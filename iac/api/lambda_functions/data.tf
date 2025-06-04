@@ -1,17 +1,6 @@
 # Copyright (C) Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: MIT-0
 
-data "terraform_remote_state" "auth" {
-  backend = "s3"
-  config = {
-    skip_region_validation = true
-
-    region = data.aws_region.this.name
-    bucket = var.fdp_backend_bucket[data.aws_region.this.name]
-    key    = format(var.fdp_backend_pattern, "cognito_user_domain")
-  }
-}
-
 data "terraform_remote_state" "cognito" {
   backend = "s3"
   config = {
@@ -19,7 +8,7 @@ data "terraform_remote_state" "cognito" {
 
     region = data.aws_region.this.name
     bucket = var.fdp_backend_bucket[data.aws_region.this.name]
-    key    = format(var.fdp_backend_pattern, "cognito_user_client")
+    key    = format(var.fdp_backend_pattern, "cognito_user_domain")
   }
 }
 
@@ -117,12 +106,4 @@ data "aws_iam_policy_document" "this" {
       data.aws_caller_identity.this.account_id,
     )]
   }
-}
-
-data "aws_secretsmanager_secret" "this" {
-  name = data.terraform_remote_state.cognito.outputs.secret_name
-}
-
-data "aws_secretsmanager_secret_version" "this" {
-  secret_id = data.aws_secretsmanager_secret.this.id
 }

@@ -3,7 +3,6 @@
 
 import { useState, useEffect } from 'react';
 import { apiGet, apiPost } from '../utils/api';
-import { forceLogout } from '../utils/auth';
 import ProcessingAnimation from './ProcessingAnimation';
 import {
   Box,
@@ -64,17 +63,6 @@ function DocumentAnalyzer({ accessToken }) {
     setError(errorMessage);
   };
 
-  const handleAuthError = async (error) => {
-    if (error.response?.status === 401) {
-      try {
-        await forceLogout();
-        // Handle redirect after signout if needed
-      } catch (signOutError) {
-        console.error('Error signing out:', signOutError);
-      }
-    }
-  };
-
   const fetchVerifications = async () => {
     try {
       console.log('Fetching verifications...', accessToken);
@@ -107,10 +95,6 @@ function DocumentAnalyzer({ accessToken }) {
       });
 
       handleAPIError(error);
-
-      if (error.response?.status === 401) {
-        handleAuthError(error);
-      }
     }
   };
 

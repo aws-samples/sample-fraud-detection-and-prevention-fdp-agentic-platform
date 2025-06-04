@@ -19,7 +19,7 @@ data "aws_iam_policy_document" "this" {
     condition {
       test     = "ForAnyValue:StringLike"
       variable = format("%s:amr", data.aws_service_principal.this.name)
-      values   = ["authenticated"]
+      values   = ["unauthenticated"]
     }
 
     condition {
@@ -48,6 +48,6 @@ data "terraform_remote_state" "s3" {
 
     region = data.aws_region.this.name
     bucket = var.fdp_backend_bucket[data.aws_region.this.name]
-    key    = format(var.fdp_backend_pattern, "s3_runtime")
+    key    = format(var.fdp_backend_pattern, "s3_website")
   }
 }

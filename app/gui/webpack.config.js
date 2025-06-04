@@ -123,15 +123,15 @@ module.exports = (env, argv) => {
               const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
 
               // Group packages into specific chunks
-              if (packageName.includes('@aws-amplify') || packageName === 'aws-amplify') {
-                return 'vendor.amplify';
+              if (packageName.includes('aws-')) {
+                return 'vendor.aws';
               }
 
               if (packageName.includes('@mui')) {
                 return 'vendor.mui';
               }
 
-              if (packageName === 'react' || packageName === 'react-dom') {
+              if (packageName === 'react' || packageName.includes('react-')) {
                 return 'vendor.react';
               }
 

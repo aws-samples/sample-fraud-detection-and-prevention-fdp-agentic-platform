@@ -7,14 +7,14 @@ resource "aws_cognito_identity_pool" "this" {
   allow_classic_flow               = var.q.allow_classic_flow
 
   cognito_identity_providers {
-    client_id               = data.terraform_remote_state.client.outputs.api
-    provider_name           = data.terraform_remote_state.cognito.outputs.endpoint
+    client_id               = data.terraform_remote_state.client.outputs.client_id
+    provider_name           = data.terraform_remote_state.client.outputs.user_pool_endpoint
     server_side_token_check = var.q.server_side_token_check
   }
 
   cognito_identity_providers {
-    client_id               = data.terraform_remote_state.client.outputs.web
-    provider_name           = data.terraform_remote_state.cognito.outputs.endpoint
+    client_id               = data.terraform_remote_state.client.outputs.api_client_id
+    provider_name           = data.terraform_remote_state.client.outputs.user_pool_endpoint
     server_side_token_check = var.q.server_side_token_check
   }
 }
@@ -26,8 +26,8 @@ resource "aws_secretsmanager_secret" "this" {
   name        = format("%s-%s-%s", var.q.secret_name, data.aws_region.this.name, local.fdp_gid)
   description = var.q.description
 
-  force_overwrite_replica_secret = true
-  recovery_window_in_days        = 0
+  force_overwrite_replica_secret = var.q.force_overwrite
+  recovery_window_in_days        = var.q.recovery_in_days
 
   dynamic "replica" {
     for_each = local.replicas
@@ -40,15 +40,10 @@ resource "aws_secretsmanager_secret" "this" {
 resource "aws_secretsmanager_secret_version" "this" {
   secret_id = aws_secretsmanager_secret.this.id
   secret_string = jsonencode({
-    FDP_TFVAR_API_GATEWAY_URL = (
-      data.terraform_remote_state.domain.outputs.api_url != ""
-      ? data.terraform_remote_state.domain.outputs.api_url
-      : data.terraform_remote_state.api.outputs.stage_invoke_url
-    )
-    FDP_TFVAR_COGNITO_AUTH_URL         = data.terraform_remote_state.domain.outputs.auth_url
     FDP_TFVAR_COGNITO_IDENTITY_POOL_ID = aws_cognito_identity_pool.this.id
-    FDP_TFVAR_COGNITO_USER_POOL_ID     = data.terraform_remote_state.cognito.outputs.id
-    FDP_TFVAR_COGNITO_USER_CLIENT_ID   = data.terraform_remote_state.client.outputs.web
+    FDP_TFVAR_CLOUDFRONT_ID            = data.terraform_remote_state.cloudfront.outputs.id
+    FDP_TFVAR_CLOUDFRONT_URL           = format("https://%s", data.terraform_remote_state.cloudfront.outputs.domain_name)
+    FDP_TFVAR_WEBSITE                  = data.terraform_remote_state.s3.outputs.id
     FDP_TFVAR_REGION                   = data.aws_region.this.name
   })
 }

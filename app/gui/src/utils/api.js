@@ -1,7 +1,16 @@
 // Copyright (C) Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import { getAuthToken } from './auth';
+// Get JWT tokens
+export const getAuthToken = async () => {
+  try {
+    const { accessToken } = (await fetchAuthSession()).tokens ?? {};
+    return accessToken;
+  } catch (error) {
+    console.error('Error getting auth token:', error);
+    throw error;
+  }
+};
 
 // API wrapper functions with optional token parameter
 export const apiGet = async (path, token = '', options = {}, apiName = 'secureApi') => {

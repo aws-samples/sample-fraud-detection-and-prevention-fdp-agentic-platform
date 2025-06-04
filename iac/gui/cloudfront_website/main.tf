@@ -97,30 +97,3 @@ resource "aws_s3_bucket_policy" "this" {
     ]
   })
 }
-
-resource "aws_secretsmanager_secret" "this" {
-  #checkov:skip=CKV_AWS_149:This solution leverages KMS encryption using AWS managed keys instead of CMKs (false positive)
-  #checkov:skip=CKV2_AWS_57:This solution does not require key automatic rotation -- managed by AWS (false positive)
-
-  name        = format("%s-%s-%s", var.q.secret_name, data.aws_region.this.name, local.fdp_gid)
-  description = var.q.description
-
-  force_overwrite_replica_secret = true
-  recovery_window_in_days        = 0
-
-  dynamic "replica" {
-    for_each = local.replicas
-    content {
-      region = replica.value
-    }
-  }
-}
-
-resource "aws_secretsmanager_secret_version" "this" {
-  secret_id = aws_secretsmanager_secret.this.id
-  secret_string = jsonencode({
-    FDP_TFVAR_CLOUDFRONT_ID  = aws_cloudfront_distribution.this.id
-    FDP_TFVAR_CLOUDFRONT_URL = aws_cloudfront_distribution.this.domain_name
-    FDP_TFVAR_WEBSITE        = data.terraform_remote_state.s3.outputs.id
-  })
-}

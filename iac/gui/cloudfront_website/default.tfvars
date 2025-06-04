@@ -8,6 +8,4 @@ q = {
   default_ttl  = 3600
   max_ttl      = 86400
   min_ttl      = 0
-  secret_name  = "fdp-gui-secrets"
-  description  = "FDP GUI SECRETS"
 }

@@ -6,6 +6,6 @@ terraform {
     use_lockfile           = true
     skip_region_validation = true
 
-    key = "terraform/github/fdp/cognito_user_client/terraform.tfstate"
+    key = "terraform/github/fdp/cognito_user_client_api/terraform.tfstate"
   }
 }
