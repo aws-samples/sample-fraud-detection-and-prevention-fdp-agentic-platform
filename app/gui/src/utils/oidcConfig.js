@@ -18,7 +18,7 @@ export const getLoginUrl = () => {
   const clientId = process.env.REACT_APP_USER_CLIENT_ID;
   const redirectUri = encodeURIComponent(process.env.REACT_APP_REDIRECT_SIGNIN);
   
-  return `${cognitoDomain}/login?client_id=${clientId}&response_type=code&scope=openid+email+profile&redirect_uri=${redirectUri}`;
+  return `${cognitoDomain}/login?client_id=${clientId}&response_type=code&scope=openid+email+profile+fdp/read+fdp/write&redirect_uri=${redirectUri}`;
 };
 
 export const getSignUpUrl = () => {
@@ -26,7 +26,7 @@ export const getSignUpUrl = () => {
   const clientId = process.env.REACT_APP_USER_CLIENT_ID;
   const redirectUri = encodeURIComponent(process.env.REACT_APP_REDIRECT_SIGNIN);
   
-  return `${cognitoDomain}/signup?client_id=${clientId}&response_type=code&scope=openid+email+profile&redirect_uri=${redirectUri}`;
+  return `${cognitoDomain}/signup?client_id=${clientId}&response_type=code&scope=openid+email+profile+fdp/read+fdp/write&redirect_uri=${redirectUri}`;
 };
 
 export const getForgotPasswordUrl = () => {
@@ -34,5 +34,5 @@ export const getForgotPasswordUrl = () => {
   const clientId = process.env.REACT_APP_USER_CLIENT_ID;
   const redirectUri = encodeURIComponent(process.env.REACT_APP_REDIRECT_SIGNIN);
   
-  return `${cognitoDomain}/forgotpassword?client_id=${clientId}&response_type=code&scope=openid+email+profile&redirect_uri=${redirectUri}`;
+  return `${cognitoDomain}/forgotpassword?client_id=${clientId}&response_type=code&scope=openid+email+profile+fdp/read+fdp/write&redirect_uri=${redirectUri}`;
 };
