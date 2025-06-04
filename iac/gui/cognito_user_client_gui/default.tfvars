@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT-0
 
 q = {
-  name           = "fdp-web"
+  name            = "fdp-web"
   description     = "FDP COGNITO CLIENT"
   access_token    = "minutes"
   id_token        = "minutes"

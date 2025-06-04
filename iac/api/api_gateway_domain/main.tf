@@ -59,6 +59,7 @@ resource "aws_secretsmanager_secret_version" "this" {
     FDP_TFVAR_COGNITO_AUTH_URL         = data.terraform_remote_state.domain.outputs.auth_url
     FDP_TFVAR_COGNITO_IDP_URL          = format("https://%s", data.terraform_remote_state.cognito.outputs.endpoint)
     FDP_TFVAR_COGNITO_USER_POOL_ID     = data.terraform_remote_state.cognito.outputs.id
+    FDP_TFVAR_COGNITO_CLIENT_ID        = data.terraform_remote_state.cognito.outputs.client_id
     FDP_TFVAR_REGION                   = data.aws_region.this.name
   })
 }

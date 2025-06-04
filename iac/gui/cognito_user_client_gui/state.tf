@@ -30,16 +30,16 @@ output "secret_name" {
 }
 
 output "user_pool_id" {
-  value     = local.secret["FDP_TFVAR_COGNITO_USER_POOL_ID"]
+  value     = lookup(local.secret, "FDP_TFVAR_COGNITO_USER_POOL_ID", "")
   sensitive = true
 }
 
 output "user_pool_endpoint" {
-  value     = local.secret["FDP_TFVAR_COGNITO_IDP_URL"]
+  value     = lookup(local.secret, "FDP_TFVAR_COGNITO_IDP_URL", "")
   sensitive = true
 }
 
 output "api_client_id" {
-  value     = local.secret["FDP_TFVAR_COGNITO_USER_POOL_ID"]
+  value     = lookup(local.secret, "FDP_TFVAR_COGNITO_CLIENT_ID", "")
   sensitive = true
 }
