@@ -2,13 +2,13 @@
 # SPDX-License-Identifier: MIT-0
 
 q = {
-  name            = "fdp-web"
+  name            = "fdp-gui"
   description     = "FDP COGNITO CLIENT"
   access_token    = "minutes"
   id_token        = "minutes"
   refresh_token   = "days"
   generate_secret = true
-  secret_name     = "fdp-client-web"
+  secret_name     = "fdp-client-gui"
   secret_search   = "fdp-api-secrets"
   callback_urls   = "http://localhost:300"
 
