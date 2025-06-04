@@ -40,6 +40,6 @@ output "user_pool_endpoint" {
 }
 
 output "api_client_id" {
-  value     = lookup(local.secret, "FDP_TFVAR_COGNITO_CLIENT_ID", "")
+  value     = lookup(local.secret, "FDP_TFVAR_COGNITO_API_CLIENT_ID", "")
   sensitive = true
 }

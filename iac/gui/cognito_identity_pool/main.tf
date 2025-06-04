@@ -41,6 +41,7 @@ resource "aws_secretsmanager_secret_version" "this" {
   secret_id = aws_secretsmanager_secret.this.id
   secret_string = jsonencode({
     FDP_TFVAR_COGNITO_IDENTITY_POOL_ID = aws_cognito_identity_pool.this.id
+    FDP_TFVAR_COGNITO_WEB_CLIENT_ID    = data.terraform_remote_state.client.outputs.client_id
     FDP_TFVAR_CLOUDFRONT_ID            = data.terraform_remote_state.cloudfront.outputs.id
     FDP_TFVAR_CLOUDFRONT_URL           = format("https://%s", data.terraform_remote_state.cloudfront.outputs.domain_name)
     FDP_TFVAR_WEBSITE                  = data.terraform_remote_state.s3.outputs.id
