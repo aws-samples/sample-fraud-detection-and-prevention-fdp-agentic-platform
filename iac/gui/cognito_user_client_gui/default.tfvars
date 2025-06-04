@@ -19,7 +19,7 @@ q = {
   supported_identity_providers = "COGNITO"
   allowed_oauth_flows          = "client_credentials"
   allowed_oauth_scopes         = <<EOF
-    email,openid,phone,profile,
+    openid,phone,profile,
     fdp/read,fdp/write
   EOF
   explicit_auth_flows          = <<EOF
