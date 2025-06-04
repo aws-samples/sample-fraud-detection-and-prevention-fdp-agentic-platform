@@ -7,7 +7,7 @@ export const oidcConfig = {
   redirect_uri: process.env.REACT_APP_REDIRECT_SIGNIN,
   post_logout_redirect_uri: process.env.REACT_APP_REDIRECT_SIGNOUT,
   response_type: 'code',
-  scope: 'openid profile fdp/read fdp/write',
+  scope: 'aws.cognito.signin.user.admin openid email profile fdp/read fdp/write',
   automaticSilentRenew: true,
   loadUserInfo: true,
   revokeTokensOnSignout: true,
