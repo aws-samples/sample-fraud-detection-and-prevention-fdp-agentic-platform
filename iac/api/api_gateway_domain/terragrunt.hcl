@@ -17,7 +17,7 @@ dependency "cognito" {
 }
 
 dependency "client" {
-  config_path  = "../cognito_user_client"
+  config_path  = "../cognito_user_client_api"
   skip_outputs = true
 }
 
