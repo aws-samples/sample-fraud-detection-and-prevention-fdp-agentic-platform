@@ -11,13 +11,17 @@ resource "aws_cognito_user_pool_client" "this" {
   explicit_auth_flows                  = split(",", replace(replace(var.q.explicit_auth_flows, " ", ""), "\n", ""))
   supported_identity_providers         = split(",", var.q.supported_identity_providers)
 
-  generate_secret = var.q.generate_secret
-  # callback_urls   = var.q.callback_urls != null ? split(",", var.q.callback_urls) : null
-  # logout_urls     = var.q.callback_urls != null ? split(",", var.q.callback_urls) : null
+  callback_urls   = (
+    var.q.callback_url != null ? [var.q.callback_url] : null
+  )
+  logout_urls     = (
+    var.q.callback_url != null ? ["${var.q.callback_url}/signout"] : null
+  )
 
   # read_attributes  = local.attributes
   # write_attributes = slice(local.attributes, 0, length(local.attributes) - 2)
 
+  generate_secret       = var.q.generate_secret
   access_token_validity = var.q.access_token_validity
   id_token_validity     = var.q.id_token_validity
 

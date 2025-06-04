@@ -9,6 +9,17 @@ data "aws_secretsmanager_secret_version" "this" {
   secret_id = data.aws_secretsmanager_secret.this.id
 }
 
+data "terraform_remote_state" "cloudfront" {
+  backend = "s3"
+  config = {
+    skip_region_validation = true
+
+    region = data.aws_region.this.name
+    bucket = var.fdp_backend_bucket[data.aws_region.this.name]
+    key    = format(var.fdp_backend_pattern, "cloudfront_website")
+  }
+}
+
 data "terraform_remote_state" "s3" {
   backend = "s3"
   config = {

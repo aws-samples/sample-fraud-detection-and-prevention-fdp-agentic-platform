@@ -10,7 +10,7 @@ q = {
   generate_secret = true
   secret_name     = "fdp-client-gui"
   secret_search   = "fdp-api-secrets"
-  callback_urls   = "http://localhost:300"
+  callback_url    = "http://localhost:300"
 
   access_token_validity = 480
   id_token_validity     = 480
