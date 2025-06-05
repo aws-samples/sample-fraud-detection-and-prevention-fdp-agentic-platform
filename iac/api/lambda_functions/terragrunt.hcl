@@ -6,11 +6,6 @@ dependency "auth" {
   skip_outputs = true
 }
 
-dependency "cognito" {
-  config_path  = "../cognito_user_client"
-  skip_outputs = true
-}
-
 dependency "dynamodb" {
   config_path  = "../dynamodb_tables"
   skip_outputs = true

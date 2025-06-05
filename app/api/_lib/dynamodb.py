@@ -561,6 +561,24 @@ class DynamoDBService:
             logger.error(f"Error updating configuration: {repr(e)}")
             raise
 
+    async def update_configuration_without_locking(self, config):
+        """Update a configuration value without optimistic locking"""
+        try:
+            # Check if config is a dict or a Pydantic model
+            if hasattr(config, 'dict'):
+                config_dict = config.dict()
+            else:
+                config_dict = config  # Already a dict
+
+            current_time = datetime.now(timezone.utc).isoformat()
+            config_dict['updated_at'] = current_time
+
+            self.configs_table.put_item(Item=config_dict)
+            return config_dict
+        except Exception as e:
+            logger.error(f"Error updating configuration without locking: {repr(e)}")
+            raise
+
     async def save_configuration(self, config):
         """Save a new configuration"""
         try:

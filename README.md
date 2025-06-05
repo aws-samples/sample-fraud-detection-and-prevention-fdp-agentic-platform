@@ -109,6 +109,26 @@ aws codebuild start-build --region us-east-1 \
 > REMINDER: Make sure to replace *us-east-1* with your target AWS region and
 *fdp-cicd-pipeline-abcd1234* with the value from the previous section.
 
+### Access GUI
+
+In previous step, you should have successfully deployed the GUI module.
+In order to access the CloudFront URL of the GUI, run the following commands:
+
+```sh
+QUERY="SecretList[?starts_with(Name,'fdp-gui-secrets')].Name"
+ID=$(aws secretsmanager list-secrets --region us-east-1 --output text --query $QUERY || echo "NA")
+SECRET=$(aws secretsmanager get-secret-value --region us-east-1 --secret-id "${ID}" --query SecretString || echo "{}")
+echo $SECRET | jq -r . | jq .FDP_TFVAR_CLOUDFRONT_URL
+```
+
+> REMINDER: Make sure to replace *us-east-1* with your target AWS region
+
+You should expect the CloudFront URL of the GUI in output (as shown below):
+
+```txt
+"d1a2b3c4d5e6f7.cloudfront.net"
+```
+
 ## Cleaning Up
 
 If you decide to clean up your AWS environment and remove all AWS resources

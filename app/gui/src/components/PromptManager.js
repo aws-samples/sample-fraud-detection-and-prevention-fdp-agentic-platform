@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT-0
 
 import { useState, useEffect } from 'react';
-import { forceLogout } from '../utils/auth';
 import { apiGet, apiPost, apiPut, apiDelete } from '../utils/api';
 import {
   Box,
@@ -183,17 +182,6 @@ function PromptManager({ accessToken }) {
       message: errorMessage,
       severity: 'error'
     });
-  };
-
-  const handleAuthError = async (error) => {
-    if (error.response?.status === 401) {
-      try {
-        await forceLogout();
-        // Handle redirect after signout if needed
-      } catch (signOutError) {
-        console.error('Error signing out:', signOutError);
-      }
-    }
   };
 
   const handleClose = () => {

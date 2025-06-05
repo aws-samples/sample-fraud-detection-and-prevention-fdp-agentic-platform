@@ -1,11 +1,8 @@
 // Copyright (C) Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import { useState, useEffect, lazy, Suspense } from 'react';
-import { Amplify } from 'aws-amplify';
-import { getAuthToken } from './utils/auth';
-import { withAuthenticator } from '@aws-amplify/ui-react';
-import '@aws-amplify/ui-react/styles.css';
+import { useState, lazy, Suspense } from 'react';
+import { useAuth } from "react-oidc-context";
 import {
   Box,
   Drawer,
@@ -32,88 +29,60 @@ import LogoutIcon from '@mui/icons-material/Logout';
 const DocumentAnalyzer = lazy(() => import('./components/DocumentAnalyzer'));
 const PromptManager = lazy(() => import('./components/PromptManager'));
 const ConfigurationManager = lazy(() => import('./components/ConfigurationManager'));
+const GuestUser = lazy(() => import('./components/GuestUser'));
 
 const expandedWidth = 240;
 const collapsedWidth = 65;
 
-// Amplify Configuration
-Amplify.configure({
-  Auth: {
-    Cognito: {
-      region: process.env.REACT_APP_AWS_REGION,
-      identityPoolId: process.env.REACT_APP_IDENTITY_POOL_ID,
-      userPoolId: process.env.REACT_APP_USER_POOL_ID,
-      userPoolClientId: process.env.REACT_APP_USER_CLIENT_ID,
-      mfa: {
-        status: "OFF",
-        types: ["SMS"]
-      },
-      // oauth: {
-      //   domain: process.env.REACT_APP_AUTH_URL,
-      //   clientId: process.env.REACT_APP_USER_CLIENT_ID,
-      //   scopes: [
-      //     'aws.cognito.signin.user.admin', 'openid',
-      //     'email', 'profile', 'fdp/read', 'fdp/write'
-      //   ],
-      //   // redirectSignIn: 'http://localhost:3000/',
-      //   // redirectSignOut: 'http://localhost:3000/',
-      //   // responseType: 'code'
-      // },
-      passwordFormat: {
-        minLength: 8
-      },
-      signUpAttributes: ["EMAIL"],
-      verificationMechanisms: ["EMAIL"]
-    }
-  },
-  API: {
-    REST: {
-      secureApi: {
-        endpoint: process.env.REACT_APP_API_URL,
-        region: process.env.REACT_APP_AWS_REGION
-      }
-    }
-  }
-});
-
-function App({ signOut, user }) {
+function App() {
   const theme = useTheme();
+  const auth = useAuth();
   const [selectedView, setSelectedView] = useState('analyzer');
   const [isExpanded, setIsExpanded] = useState(true);
-  const [accessToken, setAccessToken] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Fetch access token when component mounts
-  useEffect(() => {
-    const getAccessToken = async () => {
-      try {
-        setIsLoading(true);
-        const jwtToken = await getAuthToken();
-        console.log("JWT Token available:", Boolean(jwtToken));
-        setAccessToken(jwtToken);
-      } catch (error) {
-        console.error('Error fetching auth session:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    getAccessToken();
-  }, []);
 
   const menuItems = [
     { id: 'analyzer', text: 'Document Analyzer', icon: <DocumentScannerIcon />, tooltip: 'Analyze Documents' },
     { id: 'prompts', text: 'Prompt Manager', icon: <AutoAwesomeIcon />, tooltip: 'Manage Prompts' },
     { id: 'configs', text: 'Configuration', icon: <SettingsIcon />, tooltip: 'System Configuration' },
-    { id: 'signout', text: 'Sign Out', icon: <LogoutIcon />, tooltip: 'Sign Out', onClick: signOut },
+    { id: 'signout', text: 'Sign Out', icon: <LogoutIcon />, tooltip: 'Sign Out', onClick: () => auth.removeUser() },
   ];
 
-  // Show loading state while fetching access token
-  if (isLoading) {
+  // Show loading state while initializing auth
+  if (auth.isLoading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
         <CircularProgress />
       </Box>
+    );
+  }
+
+  // Show error state if authentication fails
+  if (auth.error) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column' }}>
+        <Typography color="error" gutterBottom>
+          Authentication Error
+        </Typography>
+        <Typography color="textSecondary" gutterBottom>
+          {auth.error.message}
+        </Typography>
+        <IconButton onClick={() => auth.signinRedirect()}>
+          Try Again
+        </IconButton>
+      </Box>
+    );
+  }
+
+  // Show not logged in component if user is not authenticated
+  if (!auth.isAuthenticated) {
+    return (
+      <Suspense fallback={
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+          <CircularProgress />
+        </Box>
+      }>
+        <GuestUser />
+      </Suspense>
     );
   }
 
@@ -161,7 +130,7 @@ function App({ signOut, user }) {
                   Document Analysis
                 </Typography>
                 <Typography variant="body2" sx={{ ml: 1 }}>
-                  {user.username}
+                  {auth.user?.profile.username}
                 </Typography>
               </>
             )}
@@ -263,13 +232,13 @@ function App({ signOut, user }) {
             {(() => {
               switch (selectedView) {
                 case 'analyzer':
-                  return <DocumentAnalyzer accessToken={accessToken} />;
+                  return <DocumentAnalyzer accessToken={auth.user?.access_token} />;
                 case 'prompts':
-                  return <PromptManager accessToken={accessToken} />;
+                  return <PromptManager accessToken={auth.user?.access_token} />;
                 case 'configs':
-                  return <ConfigurationManager accessToken={accessToken} />;
+                  return <ConfigurationManager accessToken={auth.user?.access_token} />;
                 default:
-                  return <DocumentAnalyzer accessToken={accessToken} />;
+                  return <DocumentAnalyzer accessToken={auth.user?.access_token} />;
               }
             })()}
           </Suspense>
@@ -279,4 +248,4 @@ function App({ signOut, user }) {
   );
 }
 
-export default withAuthenticator(App);
+export default App;

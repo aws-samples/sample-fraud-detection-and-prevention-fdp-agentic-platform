@@ -7,6 +7,6 @@ dependency "cognito" {
 }
 
 dependency "s3" {
-  config_path  = "../s3_runtime"
+  config_path  = "../s3_website"
   skip_outputs = true
 }

@@ -1,12 +1,8 @@
 # Copyright (C) Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: MIT-0
 
-output "api" {
-  value = aws_cognito_user_pool_client.api.id
-}
-
-output "web" {
-  value = aws_cognito_user_pool_client.web.id
+output "client_id" {
+  value = aws_cognito_user_pool_client.this.id
 }
 
 output "id" {
@@ -31,4 +27,19 @@ output "version_arn" {
 
 output "secret_name" {
   value = aws_secretsmanager_secret.this.name
+}
+
+output "user_pool_id" {
+  value     = lookup(local.secret, "FDP_TFVAR_COGNITO_USER_POOL_ID", "")
+  sensitive = true
+}
+
+output "user_pool_endpoint" {
+  value     = lookup(local.secret, "FDP_TFVAR_COGNITO_IDP_URL", "")
+  sensitive = true
+}
+
+output "api_client_id" {
+  value     = lookup(local.secret, "FDP_TFVAR_COGNITO_API_CLIENT_ID", "")
+  sensitive = true
 }
