@@ -11,6 +11,9 @@ export const oidcConfig = {
   automaticSilentRenew: true,
   loadUserInfo: true,
   revokeTokensOnSignout: true,
+  extraTokenParameters: {
+    client_id: process.env.REACT_APP_USER_CLIENT_ID
+  },
 };
 
 export const getLoginUrl = () => {
