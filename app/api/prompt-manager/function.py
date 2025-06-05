@@ -11,7 +11,6 @@ from lib.models import Prompt
 from lib.prompt_manager import PromptManager
 import asyncio
 
-
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger(__name__)

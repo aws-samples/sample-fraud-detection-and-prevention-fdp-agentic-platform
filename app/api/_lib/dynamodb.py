@@ -25,10 +25,10 @@ load_dotenv()
 class DynamoDBService:
     def __init__(self):
         self.dynamodb = boto3.resource('dynamodb')
+        self.s3_bucket_name = os.getenv('FDP_S3_BUCKET')
         self.agent_table_name = os.getenv('FDP_DDB_AGENT')
         self.prompts_table_name = os.getenv('FDP_DDB_PROMPT')
         self.configs_table_name = os.getenv('FDP_DDB_CONFIG')
-        self.s3_bucket_name = os.getenv('FDP_S3_BUCKET')
 
         if not self.s3_bucket_name:
             raise ValueError("FDP_S3_BUCKET environment variable is not set")

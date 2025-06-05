@@ -4,11 +4,7 @@
 
 import json
 import logging
-import os
-import uuid
 import boto3
-from datetime import datetime, timezone
-from decimal import Decimal
 from dotenv import load_dotenv
 from lib.utils import create_api_response
 from lib.dynamodb import DynamoDBService
@@ -26,13 +22,7 @@ load_dotenv()
 
 def initialize_services():
     """Initialize services at module level"""
-    if not os.environ.get('FDP_S3_BUCKET'):
-        raise ValueError("FDP_S3_BUCKET environment variable is not set")
-
-    bedrock_client = boto3.client(
-        "bedrock-runtime",
-        region_name="us-east-1",
-    )
+    bedrock_client = boto3.client("bedrock-runtime")
     s3_service = S3Service()
     db_service = DynamoDBService()
 
