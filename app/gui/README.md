@@ -50,16 +50,6 @@ configuration features.
    npm start
    ```
 
-## AWS Cognito Setup
-
-1. Create a User Pool in AWS Cognito
-2. Create an App Client
-3. Configure App Client settings:
-   - Enable Cognito User Pool as an identity provider
-   - Configure callback URLs (e.g., http://localhost:3000/)
-   - Select OAuth 2.0 flows (Authorization code grant)
-   - Select OAuth 2.0 scopes (email, openid, profile)
-
 ## Project Structure
 
 ```sh
