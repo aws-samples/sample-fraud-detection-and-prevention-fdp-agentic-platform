@@ -66,7 +66,7 @@ async def create_verifications(event, context):
 
         request = DocumentAnalysisRequest(**body)
 
-        # Process document
+        # Process document - create a fresh coroutine each time
         result = await MANAGER.analyze_document(request.image_base64)
         return create_api_response(200, result)
 
@@ -74,7 +74,7 @@ async def create_verifications(event, context):
         LOGGER.error("Validation error: %s", str(ve))
         return create_api_response(400, {'detail': str(ve)})
     except Exception as e: # pylint: disable=broad-except
-        LOGGER.error("Error: %s", str(e))
+        LOGGER.error("Error: %s", str(e), exc_info=True)
         return create_api_response(500, {'detail': str(e)})
 
 
@@ -124,10 +124,14 @@ def handler(event, context):
     try:
         # Route requests to appropriate handler
         if http_method == 'GET' and path.startswith('/verifications'):
-            result = loop.run_until_complete(get_verifications(event, context))
+            # Create a fresh coroutine object
+            coro = get_verifications(event, context)
+            result = loop.run_until_complete(coro)
             return result
         if http_method == 'POST' and path.startswith('/verifications'):
-            result = loop.run_until_complete(create_verifications(event, context))
+            # Create a fresh coroutine object
+            coro = create_verifications(event, context)
+            result = loop.run_until_complete(coro)
             return result
 
         return create_api_response(404, {'detail': 'Not Found'})

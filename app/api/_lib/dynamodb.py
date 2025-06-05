@@ -492,9 +492,19 @@ class DynamoDBService:
             logger.error(f"Error deleting prompt: {repr(e)}")
             raise
 
-    @lru_cache(maxsize=1)
+    # Cache for active prompt (store the result, not the coroutine)
+    _active_prompt_cache = None
+    _active_prompt_timestamp = None
+    
     async def get_active_prompt(self):
         """Get the currently active prompt with caching"""
+        # Simple time-based cache (30 seconds)
+        current_time = datetime.now(timezone.utc)
+        if (self._active_prompt_cache is not None and 
+            self._active_prompt_timestamp is not None and
+            (current_time - self._active_prompt_timestamp).total_seconds() < 30):
+            return self._active_prompt_cache
+            
         try:
             response = self.prompts_table.scan(
                 FilterExpression='is_active = :true',
@@ -504,11 +514,17 @@ class DynamoDBService:
             items = response.get('Items', [])
             if not items:
                 logger.warning("No active prompt found")
+                self._active_prompt_cache = None
+                self._active_prompt_timestamp = current_time
                 return None
             
             if len(items) > 1:
                 logger.warning("Multiple active prompts found, using the first one")
 
+            # Update cache
+            self._active_prompt_cache = items[0]
+            self._active_prompt_timestamp = current_time
+            
             return items[0]
         except Exception as e:
             logger.error(f"Error getting active prompt: {repr(e)}")
@@ -599,9 +615,19 @@ class DynamoDBService:
             logger.error(f"Error saving configuration: {repr(e)}")
             raise
 
-    @lru_cache(maxsize=1)
+    # Cache for active model config (store the result, not the coroutine)
+    _active_model_config_cache = None
+    _active_model_config_timestamp = None
+    
     async def get_active_model_config(self):
         """Get the currently active model configuration with caching"""
+        # Simple time-based cache (30 seconds)
+        current_time = datetime.now(timezone.utc)
+        if (self._active_model_config_cache is not None and 
+            self._active_model_config_timestamp is not None and
+            (current_time - self._active_model_config_timestamp).total_seconds() < 30):
+            return self._active_model_config_cache
+            
         try:
             response = self.configs_table.query(
                 KeyConditionExpression='pk = :pk',
@@ -623,8 +649,16 @@ class DynamoDBService:
                         ':sk': 'LITE'
                     }
                 )
-                return response['Items'][0] if response['Items'] else None
+                result = response['Items'][0] if response['Items'] else None
+                
+                # Update cache
+                self._active_model_config_cache = result
+                self._active_model_config_timestamp = current_time
+                return result
 
+            # Update cache
+            self._active_model_config_cache = items[0]
+            self._active_model_config_timestamp = current_time
             return items[0]
         except Exception as e:
             logger.error(f"Error getting active model config: {repr(e)}")
@@ -632,5 +666,7 @@ class DynamoDBService:
 
     def clear_caches(self):
         """Clear all cached data"""
-        self.get_active_prompt.cache_clear()
-        self.get_active_model_config.cache_clear()
+        self._active_prompt_cache = None
+        self._active_prompt_timestamp = None
+        self._active_model_config_cache = None
+        self._active_model_config_timestamp = None

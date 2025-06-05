@@ -123,6 +123,7 @@ class DocumentAnalyzer:
             },
         }
 
+        # Use a synchronous call since boto3 doesn't support async natively
         response = self.bedrock_client.invoke_model(
             modelId=active_model['value'],
             body=json.dumps(native_request)

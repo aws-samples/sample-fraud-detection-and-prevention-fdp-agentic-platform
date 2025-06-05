@@ -35,8 +35,9 @@ configuration features.
    ```sh
    REACT_APP_AWS_REGION=YOUR_REGION
    REACT_APP_IDENTITY_POOL_ID=YOUR_IDENTITY_POOL_ID
-   REACT_APP_USER_POOL_ID=YOUR_USER_POOL_ID
    REACT_APP_USER_CLIENT_ID=YOUR_APP_CLIENT_ID
+   REACT_APP_USER_POOL_ID=YOUR_USER_POOL_ID
+   REACT_APP_IDP_URL=YOUR_COGNITO_IDP_URL
    REACT_APP_AUTH_URL=YOUR_COGNITO_AUTH_URL
    REACT_APP_API_URL=YOUR_API_GATEWAY_URL
    REACT_APP_REDIRECT_SIGNIN=YOUR_SIGNIN_URL
@@ -66,6 +67,7 @@ src/
 ├── components/
 │   ├── ConfigurationManager.js
 │   ├── DocumentAnalyzer.js
+│   ├── GuestUser.js
 │   ├── ProcessingAnimation.js
 │   └── PromptManager.js
 ├── App.css
@@ -91,10 +93,3 @@ src/
 ## License
 
 MIT
-
-## Sources
-
-- https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools.html
-- https://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html
-- https://docs.aws.amazon.com/amplify/latest/userguide/welcome.html
-- https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/welcome.html
