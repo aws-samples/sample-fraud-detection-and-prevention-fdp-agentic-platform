@@ -28,4 +28,8 @@ r = [{
   key  = "prompt"
   name = "fdp-prompt"
   attr = "pk"
+  }, {
+  key  = "strands"
+  name = "fdp-strands"
+  attr = "pk"
 }]

@@ -24,12 +24,15 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import LogoutIcon from '@mui/icons-material/Logout';
+import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 
 // Lazy load components to reduce initial bundle size
 const DocumentAnalyzer = lazy(() => import('./components/DocumentAnalyzer'));
 const PromptManager = lazy(() => import('./components/PromptManager'));
 const ConfigurationManager = lazy(() => import('./components/ConfigurationManager'));
 const GuestUser = lazy(() => import('./components/GuestUser'));
+const StrandsVerification = lazy(() => import('./components/StrandsVerification'));
+const Dashboard = lazy(() => import('./components/Dashboard'));
 
 const expandedWidth = 240;
 const collapsedWidth = 65;
@@ -37,11 +40,13 @@ const collapsedWidth = 65;
 function App() {
   const theme = useTheme();
   const auth = useAuth();
-  const [selectedView, setSelectedView] = useState('analyzer');
+  const [selectedView, setSelectedView] = useState('dashboard');
   const [isExpanded, setIsExpanded] = useState(true);
 
   const menuItems = [
+    { id: 'dashboard', text: 'Dashboard', icon: <ChevronRightIcon />, tooltip: 'Dashboard' },
     { id: 'analyzer', text: 'Document Analyzer', icon: <DocumentScannerIcon />, tooltip: 'Analyze Documents' },
+    { id: 'verification', text: 'Advanced Verification', icon: <VerifiedUserIcon />, tooltip: 'Advanced Verification' },
     { id: 'prompts', text: 'Prompt Manager', icon: <AutoAwesomeIcon />, tooltip: 'Manage Prompts' },
     { id: 'configs', text: 'Configuration', icon: <SettingsIcon />, tooltip: 'System Configuration' },
     { id: 'signout', text: 'Sign Out', icon: <LogoutIcon />, tooltip: 'Sign Out', onClick: () => auth.removeUser() },
@@ -231,14 +236,18 @@ function App() {
           }>
             {(() => {
               switch (selectedView) {
+                case 'dashboard':
+                  return <Dashboard setSelectedView={setSelectedView} />;
                 case 'analyzer':
                   return <DocumentAnalyzer accessToken={auth.user?.access_token} />;
+                case 'verification':
+                  return <StrandsVerification accessToken={auth.user?.access_token} />;
                 case 'prompts':
                   return <PromptManager accessToken={auth.user?.access_token} />;
                 case 'configs':
                   return <ConfigurationManager accessToken={auth.user?.access_token} />;
                 default:
-                  return <DocumentAnalyzer accessToken={auth.user?.access_token} />;
+                  return <Dashboard setSelectedView={setSelectedView} />;
               }
             })()}
           </Suspense>

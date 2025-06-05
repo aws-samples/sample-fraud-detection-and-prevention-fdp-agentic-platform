@@ -18,6 +18,7 @@ locals {
     FDP_DDB_AGENT       = lookup(data.terraform_remote_state.dynamodb.outputs.id, "agent", null)
     FDP_DDB_CONFIG      = lookup(data.terraform_remote_state.dynamodb.outputs.id, "config", null)
     FDP_DDB_PROMPT      = lookup(data.terraform_remote_state.dynamodb.outputs.id, "prompt", null)
+    FDP_DDB_STRANDS     = lookup(data.terraform_remote_state.dynamodb.outputs.id, "strands", null)
     FDP_S3_BUCKET       = data.terraform_remote_state.s3.outputs.id
     SECRETS_MANAGER_TTL = var.q.secrets_manager_ttl
   }
