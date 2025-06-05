@@ -11,9 +11,11 @@ in the Fraud Detection and Prevention (FDP) Agentic Platform.
 ## Python Dependencies
 
 ### Python
+
 - **Version**: 3.9
 - **Website**: https://www.python.org/
 - **License**: PSF License
+
 ```
 Copyright © 2001-2022 Python Software Foundation; All Rights Reserved
 
@@ -32,9 +34,11 @@ THIS SOFTWARE.
 ```
 
 ### AWS SDK for Python (Boto3)
-- **Version**: 1.33.13
+
+- **Version**: 1.35.99
 - **Website**: https://github.com/boto/boto3/
 - **License**: Apache License 2.0
+
 ```
 Copyright 2013-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
@@ -42,9 +46,11 @@ Licensed under the Apache License, Version 2.0
 ```
 
 ### Botocore
-- **Version**: 1.34.42
+
+- **Version**: 1.35.99
 - **Website**: https://github.com/boto/botocore
 - **License**: Apache License 2.0
+
 ```
 Copyright 2012-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
@@ -52,9 +58,11 @@ Licensed under the Apache License, Version 2.0
 ```
 
 ### Requests
-- **Version**: 2.13.0
+
+- **Version**: 2.32.3
 - **Website**: https://github.com/psf/requests
 - **License**: Apache License 2.0
+
 ```
 Copyright 2017 Kenneth Reitz
 
@@ -62,9 +70,11 @@ Licensed under the Apache License, Version 2.0
 ```
 
 ### Python-dateutil
-- **Version**: 2.8.2
+
+- **Version**: 2.9.0.post0
 - **Website**: https://github.com/dateutil/dateutil
 - **License**: Apache License 2.0
+
 ```
 Copyright 2017- Paul Ganssle <paul@ganssle.io>
 Copyright 2017- dateutil contributors (see AUTHORS file)
@@ -73,52 +83,108 @@ Licensed under the Apache License, Version 2.0
 ```
 
 ### S3transfer
-- **Version**: 0.7.0
+
+- **Version**: 0.10.4
 - **Website**: https://github.com/boto/s3transfer
 - **License**: Apache License 2.0
+
 ```
 Copyright 2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0
 ```
 
-### Transformers
-- **Version**: 4.37.1
-- **Website**: https://github.com/huggingface/transformers
-- **License**: Apache License 2.0
-```
-Copyright 2018- The Hugging Face team. All rights reserved.
+### Six
 
-Licensed under the Apache License, Version 2.0
-```
+- **Version**: 1.17.0
+- **Website**: https://github.com/benjaminp/six
+- **License**: MIT License
 
-### Sentence-transformers
-- **Version**: 2.2.2
-- **Website**: https://github.com/UKPLab/sentence-transformers
-- **License**: Apache License 2.0
 ```
-Copyright 2019 Nils Reimers
+Copyright (c) 2010-2020 Benjamin Peterson
 
-Licensed under the Apache License, Version 2.0
-```
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
 
-### Kubernetes Client
-- **Version**: 17.17.0
-- **Website**: https://github.com/kubernetes-client/python
-- **License**: Apache License 2.0
-```
-Copyright 2014 The Kubernetes Authors.
-
-Licensed under the Apache License, Version 2.0
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 ```
 
-### Pandas
-- **Version**: 2.2.2
-- **Website**: https://github.com/pandas-dev/pandas
+### urllib3
+
+- **Version**: 1.26.20
+- **Website**: https://github.com/urllib3/urllib3
+- **License**: MIT License
+
+```
+Copyright (c) 2008-2020 Andrey Petrov and contributors (see CONTRIBUTORS.txt)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+```
+
+### JMESPath
+
+- **Version**: 1.0.1
+- **Website**: https://pypi.org/project/jmespath/
+- **License**: MIT License
+
+```
+Copyright (c) 2013 Amazon.com, Inc. or its affiliates. All Rights Reserved
+
+Permission is hereby granted, free of charge, to any person obtaining a
+copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish, dis-
+tribute, sublicense, and/or sell copies of the Software, and to permit
+persons to whom the Software is furnished to do so, subject to the fol-
+lowing conditions:
+
+The above copyright notice and this permission notice shall be included
+in all copies or substantial portions of the Software.
+```
+
+### FastAPI
+
+- **Version**: 0.115.6
+- **Website**: https://github.com/tiangolo/fastapi
+- **License**: MIT License
+
+```
+The MIT License (MIT)
+
+Copyright (c) 2018 Sebastián Ramírez
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+```
+
+### Uvicorn
+
+- **Version**: 0.34.0
+- **Website**: https://github.com/encode/uvicorn
 - **License**: BSD 3-Clause License
+
 ```
-Copyright (c) 2008-2011, AQR Capital Management, LLC, Lambda Foundry, Inc. and PyData Development Team
-Copyright (c) 2011-2023, Open source contributors.
+Copyright © 2017-present, Encode OSS Ltd. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
@@ -133,23 +199,36 @@ modification, are permitted provided that the following conditions are met:
 * Neither the name of the copyright holder nor the names of its
   contributors may be used to endorse or promote products derived from
   this software without specific prior written permission.
+```
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+### Pydantic
+
+- **Version**: 2.10.5
+- **Website**: https://github.com/pydantic/pydantic
+- **License**: MIT License
+
+```
+The MIT License (MIT)
+
+Copyright (c) 2017 Samuel Colvin and other contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 ```
 
 ### Python-dotenv
-- **Version**: 1.0.0
+
+- **Version**: 1.0.1
 - **Website**: https://github.com/theskumar/python-dotenv
 - **License**: BSD 3-Clause License
+
 ```
 Copyright (c) 2014, Saurabh Kumar (python-dotenv), 2013, Ted Tieken (django-dotenv-rw), 2013, Jacob Kaplan-Moss (django-dotenv)
 
@@ -168,37 +247,36 @@ are permitted provided that the following conditions are met:
   without specific prior written permission.
 ```
 
-### NumPy
-- **Version**: 1.26.0
-- **Website**: https://github.com/numpy/numpy
+### Backoff
+
+- **Version**: 2.2.0
+- **Website**: https://github.com/litl/backoff
+- **License**: MIT License
+
+```
+The MIT License (MIT)
+
+Copyright (c) 2014 litl, LLC.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+```
+
+### Joblib
+
+- **Version**: 1.2.0
+- **Website**: https://github.com/joblib/joblib
 - **License**: BSD 3-Clause License
+
 ```
-Copyright (c) 2005-2023, NumPy Developers.
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
-
-    * Redistributions of source code must retain the above copyright
-       notice, this list of conditions and the following disclaimer.
-
-    * Redistributions in binary form must reproduce the above
-       copyright notice, this list of conditions and the following
-       disclaimer in the documentation and/or other materials provided
-       with the distribution.
-
-    * Neither the name of the NumPy Developers nor the names of any
-       contributors may be used to endorse or promote products derived
-       from this software without specific prior written permission.
-```
-
-### Scikit-learn
-- **Version**: 1.1.3
-- **Website**: http://scikit-learn.org
-- **License**: BSD 3-Clause License
-```
-Copyright (c) 2007-2021 The scikit-learn developers.
+Copyright (c) 2008-2021, The joblib developers.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -216,87 +294,57 @@ modification, are permitted provided that the following conditions are met:
   this software without specific prior written permission.
 ```
 
-### Six
-- **Version**: 1.16.0
-- **Website**: https://github.com/benjaminp/six
-- **License**: MIT License
+### Pika
+
+- **Version**: 1.3.0
+- **Website**: https://github.com/pika/pika
+- **License**: BSD 3-Clause License
+
 ```
-Copyright (c) 2010-2020 Benjamin Peterson
+Copyright (c) 2009-2021, Tony Garnock-Jones, Gavin M. Roy, Pivotal Software, Inc and others.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of the Pika project nor the names of its contributors may be used
+   to endorse or promote products derived from this software without specific
+   prior written permission.
+```
+
+### xmltodict
+
+- **Version**: 0.13.0
+- **Website**: https://github.com/martinblech/xmltodict
+- **License**: MIT License
+
+```
+Copyright (C) 2012 Martin Blech and contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
 the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-the Software, and to permit persons to whom the Software is furnished to do so,
-subject to the following conditions:
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
-```
-
-### urllib3
-- **Version**: 2.2.0
-- **Website**: https://github.com/urllib3/urllib3
-- **License**: MIT License
-```
-Copyright (c) 2008-2020 Andrey Petrov and contributors (see CONTRIBUTORS.txt)
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-the Software, and to permit persons to whom the Software is furnished to do so,
-subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-```
-
-### JMESPath
-- **Version**: 1.0.1
-- **Website**: https://pypi.org/project/jmespath/
-- **License**: MIT License
-```
-Copyright (c) 2013 Amazon.com, Inc. or its affiliates. All Rights Reserved
-
-Permission is hereby granted, free of charge, to any person obtaining a
-copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish, dis-
-tribute, sublicense, and/or sell copies of the Software, and to permit
-persons to whom the Software is furnished to do so, subject to the fol-
-lowing conditions:
-
-The above copyright notice and this permission notice shall be included
-in all copies or substantial portions of the Software.
 ```
 
 ## JavaScript Dependencies
 
-### AWS Amplify
-- **Version**: 6.14.2
-- **Website**: https://github.com/aws-amplify/amplify-js
-- **License**: Apache License 2.0
-```
-Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-
-Licensed under the Apache License, Version 2.0
-```
-
-### AWS Amplify UI React
-- **Version**: 6.11.0
-- **Website**: https://github.com/aws-amplify/amplify-ui
-- **License**: Apache License 2.0
-```
-Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-
-Licensed under the Apache License, Version 2.0
-```
-
 ### React
+
 - **Version**: 19.1.0
 - **Website**: https://github.com/facebook/react
 - **License**: MIT License
+
 ```
 Copyright (c) Facebook, Inc. and its affiliates.
 
@@ -312,9 +360,11 @@ copies or substantial portions of the Software.
 ```
 
 ### React DOM
+
 - **Version**: 19.1.0
 - **Website**: https://github.com/facebook/react
 - **License**: MIT License
+
 ```
 Copyright (c) Facebook, Inc. and its affiliates.
 
@@ -330,9 +380,11 @@ copies or substantial portions of the Software.
 ```
 
 ### Material UI
-- **Version**: 6.4.1
+
+- **Version**: 6.4.12
 - **Website**: https://github.com/mui/material-ui
 - **License**: MIT License
+
 ```
 The MIT License (MIT)
 
@@ -350,9 +402,11 @@ copies or substantial portions of the Software.
 ```
 
 ### Material UI Icons
-- **Version**: 6.4.2
+
+- **Version**: 6.4.12
 - **Website**: https://github.com/mui/material-ui
 - **License**: MIT License
+
 ```
 The MIT License (MIT)
 
@@ -370,9 +424,11 @@ copies or substantial portions of the Software.
 ```
 
 ### Emotion
+
 - **Version**: 11.14.0
 - **Website**: https://github.com/emotion-js/emotion
 - **License**: MIT License
+
 ```
 MIT License
 
@@ -390,9 +446,11 @@ copies or substantial portions of the Software.
 ```
 
 ### React Markdown
-- **Version**: 9.0.3
+
+- **Version**: 9.1.0
 - **Website**: https://github.com/remarkjs/react-markdown
 - **License**: MIT License
+
 ```
 The MIT License (MIT)
 
@@ -410,9 +468,11 @@ copies or substantial portions of the Software.
 ```
 
 ### React Syntax Highlighter
+
 - **Version**: 15.6.1
 - **Website**: https://github.com/react-syntax-highlighter/react-syntax-highlighter
 - **License**: MIT License
+
 ```
 MIT License
 
@@ -430,9 +490,11 @@ copies or substantial portions of the Software.
 ```
 
 ### Framer Motion
-- **Version**: 12.4.2
+
+- **Version**: 12.16.0
 - **Website**: https://github.com/framer/motion
 - **License**: MIT License
+
 ```
 The MIT License (MIT)
 
@@ -449,20 +511,12 @@ The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 ```
 
-### Web Vitals
-- **Version**: 2.1.4
-- **Website**: https://github.com/GoogleChrome/web-vitals
-- **License**: Apache License 2.0
-```
-Copyright 2020 Google LLC
-
-Licensed under the Apache License, Version 2.0
-```
-
 ### Webpack
-- **Version**: 5.97.1
+
+- **Version**: 5.99.9
 - **Website**: https://github.com/webpack/webpack
 - **License**: MIT License
+
 ```
 Copyright JS Foundation and other contributors
 
@@ -479,9 +533,11 @@ included in all copies or substantial portions of the Software.
 ```
 
 ### Babel
-- **Version**: 7.26.0
+
+- **Version**: 7.27.4
 - **Website**: https://github.com/babel/babel
 - **License**: MIT License
+
 ```
 MIT License
 
@@ -499,6 +555,49 @@ The above copyright notice and this permission notice shall be
 included in all copies or substantial portions of the Software.
 ```
 
+### React OIDC Context
+
+- **Version**: 3.3.0
+- **Website**: https://github.com/authts/react-oidc-context
+- **License**: MIT License
+
+```
+MIT License
+
+Copyright (c) 2021 AuthTS
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+```
+
+### Testing Library
+
+- **Version**: 16.3.0
+- **Website**: https://github.com/testing-library/react-testing-library
+- **License**: MIT License
+
+```
+The MIT License (MIT)
+Copyright (c) 2017 Kent C. Dodds
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+```
+
 ## Apache License 2.0
 
 For all components licensed under the Apache License 2.0, the full license text can be found at:
@@ -513,3 +612,26 @@ https://opensource.org/licenses/MIT
 
 For all components licensed under the BSD 3-Clause License, the full license text can be found at:
 https://opensource.org/licenses/BSD-3-Clause
+
+## MIT-0 License
+
+The Fraud Detection and Prevention (FDP) Agentic Platform itself is licensed under the MIT-0 License:
+
+```
+MIT No Attribution
+
+Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+```
