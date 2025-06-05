@@ -26,17 +26,22 @@ class S3Service:
         if not self.bucket_name:
             raise ValueError("FDP_S3_BUCKET environment variable is not set")
 
+        # Cache the region
+        if os.getenv('FDP_REGION'):
+            self.region_name = os.getenv('FDP_REGION')
+        elif os.getenv('AWS_REGION'):
+            self.region_name = os.getenv('AWS_REGION')
+        if not self.region_name:
+            raise ValueError("FDP_REGION environment variable is not set")
+
         # Initialize S3 client with config
-        self.s3 = boto3.client('s3', 
+        self.s3 = boto3.client('s3',
             config=Config(
                 retries = dict(
                     max_attempts = 3
                 )
             )
         )
-        
-        # Cache the region
-        self.region = self.s3.meta.region_name if hasattr(self.s3, 'meta') else 'us-east-1'
 
         # Ensure bucket exists
         self.ensure_bucket_exists()
@@ -55,7 +60,7 @@ class S3Service:
             error_code = e.response['Error']['Code']
             if error_code == '404':
                 try:
-                    if self.region == 'us-east-1':
+                    if self.region_name == 'us-east-1':
                         # Create bucket without LocationConstraint for us-east-1
                         self.s3.create_bucket(Bucket=self.bucket_name)
                     else:
@@ -63,7 +68,7 @@ class S3Service:
                         self.s3.create_bucket(
                             Bucket=self.bucket_name,
                             CreateBucketConfiguration={
-                                'LocationConstraint': self.region
+                                'LocationConstraint': self.region_name
                             }
                         )
 
