@@ -6,8 +6,8 @@ import uuid
 from datetime import datetime, timezone
 from typing import Dict, Optional
 import asyncio
-from strands_agents import Agent, Tool
-from strands_agents.memory import SimpleMemory
+from strands import Agent
+from strands import Tool
 from .models import AgentRequest, VerificationStatus
 
 class DocumentVerificationAgent:
@@ -24,9 +24,6 @@ class DocumentVerificationAgent:
 
     def _initialize_agent(self) -> Agent:
         """Initialize the Strands Agent with tools and memory"""
-        # Create memory for the agent
-        memory = SimpleMemory()
-
         # Define tools for the agent
         tools = [
             Tool(
@@ -56,7 +53,7 @@ class DocumentVerificationAgent:
             name="DocumentVerificationAgent",
             description="An agent that verifies documents for authenticity and extracts information",
             tools=tools,
-            memory=memory,
+            memory={},  # Use a simple dict for memory
             model_id="amazon.nova-lite-v1:0",  # Use the active model from config in production
             bedrock_client=self.bedrock_client
         )
@@ -161,10 +158,10 @@ class DocumentVerificationAgent:
         """Run the verification process using Strands Agent"""
         try:
             # Set up the agent with context
-            self.agent.memory.add("verification_id", verification_id)
-            self.agent.memory.add("document_image", image_base64)
+            self.agent.memory["verification_id"] = verification_id
+            self.agent.memory["document_image"] = image_base64
             if document_type:
-                self.agent.memory.add("document_type", document_type)
+                self.agent.memory["document_type"] = document_type
 
             # Define the task for the agent
             task = """
@@ -199,7 +196,7 @@ class DocumentVerificationAgent:
             verification = await self.db_service.get_agent_verification(verification_id)
 
             # Add additional info to agent memory
-            self.agent.memory.add("additional_info", additional_info)
+            self.agent.memory["additional_info"] = additional_info
 
             # Define the continuation task
             task = """
