@@ -20,7 +20,7 @@ resource "aws_cloudfront_distribution" "this" {
   # aliases = ["mysite.example.com", "yoursite.example.com"]
 
   origin {
-    domain_name              = data.terraform_remote_state.s3.outputs.bucket_domain_name
+    domain_name              = data.terraform_remote_state.s3.outputs.bucket_regional_domain_name
     origin_id                = local.s3_origin_id
     origin_access_control_id = aws_cloudfront_origin_access_control.this.id
   }
