@@ -20,13 +20,13 @@ class DocumentVerificationAgent:
         self.s3_service = services['s3_service']
         self.bedrock_client = services['bedrock_client']
         self.logger = logger
-        
+
         # Initialize agent memory
         self.agent_memory = {}
-        
+
         # Initialize Strands Agent
         self.agent = self._initialize_agent()
-        
+
         # Nova Lite model ID for LLM tasks
         self.nova_model_id = "amazon.nova-lite-v1:0"
 
@@ -39,7 +39,7 @@ class DocumentVerificationAgent:
             streaming=False,
             client=self.bedrock_client
         )
-        
+
         # Create the agent with the Bedrock model
         agent = Agent(
             tools=[
@@ -151,7 +151,7 @@ class DocumentVerificationAgent:
         try:
             # Reset agent memory for this new verification
             self.agent_memory.clear()
-            
+
             # Set up context for the agent
             context = {
                 "verification_id": verification_id,
@@ -191,17 +191,17 @@ class DocumentVerificationAgent:
         try:
             # Get current verification
             verification = await self.db_service.get_agent_verification(verification_id)
-            
+
             # Create context with additional info and document data
             context = {
                 "additional_info": additional_info,
                 "verification_id": verification_id
             }
-            
+
             # Add document image if available
             if "document_image" in self.agent_memory:
                 context["document_image"] = self.agent_memory["document_image"]
-            
+
             # Add document type if available
             if verification.get("document_type"):
                 context["document_type"] = verification.get("document_type")
@@ -229,31 +229,31 @@ class DocumentVerificationAgent:
         try:
             # Get current verification
             verification = await self.db_service.get_agent_verification(verification_id)
-            
+
             # In 0.1.6, the response format is different
             # Extract the agent's response from the result
             agent_response = result.get("response", {})
             tool_executions = result.get("tool_executions", [])
-            
+
             # Update memory with extracted information
             for execution in tool_executions:
                 if execution.get("tool_name") == "extract_document_fields" and "result" in execution:
                     if "fields" in execution["result"]:
                         self.agent_memory["extracted_fields"] = execution["result"]["fields"]
-                        
+
                 if execution.get("tool_name") == "analyze_document_image" and "result" in execution:
                     if "document_type" in execution["result"]:
                         self.agent_memory["document_type"] = execution["result"]["document_type"]
-            
+
             # Check if agent indicated it needs more information
             needs_info = False
             info_request = None
-            
+
             # Look for mentions of additional info needed in the response
             if "need more information" in agent_response.lower() or "additional information needed" in agent_response.lower():
                 needs_info = True
                 info_request = agent_response
-            
+
             if needs_info:
                 # Agent needs more information
                 verification['status'] = VerificationStatus.NEEDS_INFO
@@ -261,22 +261,22 @@ class DocumentVerificationAgent:
             else:
                 # Extract results from tool executions and response
                 verification['status'] = VerificationStatus.COMPLETED
-                
+
                 # Try to extract a confidence score
                 confidence = 0.0
                 for execution in tool_executions:
                     if execution.get("result", {}).get("confidence"):
                         confidence = max(confidence, float(execution["result"]["confidence"]))
-                
+
                 verification['confidence'] = confidence
                 verification['result_summary'] = agent_response
-                
+
                 # Try to extract document type if available
                 for execution in tool_executions:
                     if "document_type" in execution.get("result", {}):
                         verification['document_type'] = execution["result"]["document_type"]
                         break
-                
+
                 # Add extracted fields if available
                 for execution in tool_executions:
                     if execution.get("tool_name") == "extract_document_fields" and "result" in execution:
@@ -338,7 +338,7 @@ class DocumentVerificationAgent:
             # Get image from memory if not provided directly
             if not image_base64 and "document_image" in self.agent_memory:
                 image_base64 = self.agent_memory["document_image"]
-                
+
             if not image_base64:
                 return {
                     "document_type": "unknown",
@@ -346,14 +346,14 @@ class DocumentVerificationAgent:
                     "confidence": 0.0,
                     "error": "No image provided"
                 }
-                
+
             # Prepare prompt for Nova Lite multimodal model
             prompt = """
             Analyze this document image and determine:
             1. What type of document it is (e.g., passport, driver's license, ID card, birth certificate, etc.)
             2. The quality of the image (high, medium, low)
             3. Any noticeable features or characteristics of the document
-            
+
             Format your response as JSON with the following format:
             {
                 "document_type": "document type",
@@ -366,7 +366,7 @@ class DocumentVerificationAgent:
                 }
             }
             """
-            
+
             # Prepare request for Nova Lite
             request_data = {
                 "prompt": prompt,
@@ -374,17 +374,17 @@ class DocumentVerificationAgent:
                 "max_tokens": 500,
                 "image_base64": image_base64
             }
-            
+
             # Invoke Nova Lite through Bedrock
             response = await self.bedrock_client.invoke_model(
                 modelId=self.nova_model_id,
                 body=json.dumps(request_data)
             )
             response_body = json.loads(await response["body"].read())
-            
+
             # Extract response content - Nova Lite returns differently structured response
             response_text = response_body.get("generation", "")
-            
+
             # Parse the JSON from Nova's response
             try:
                 # Handle possible text before or after JSON
@@ -403,7 +403,7 @@ class DocumentVerificationAgent:
                         document_type = "identification card"
                     else:
                         document_type = "unknown document"
-                        
+
                     analysis_result = {
                         "document_type": document_type,
                         "image_quality": "medium",
@@ -413,7 +413,7 @@ class DocumentVerificationAgent:
                             "format": "color"
                         }
                     }
-                
+
                 # Ensure required fields are present
                 if "document_type" not in analysis_result:
                     analysis_result["document_type"] = "unknown"
@@ -423,12 +423,12 @@ class DocumentVerificationAgent:
                     analysis_result["confidence"] = 0.7
                 if "details" not in analysis_result:
                     analysis_result["details"] = {}
-                
+
                 # Store document type in memory for future use
                 self.agent_memory["document_type"] = analysis_result["document_type"]
-                    
+
                 return analysis_result
-                
+
             except json.JSONDecodeError:
                 # If JSON parsing fails, create a structured response
                 self.logger.warning("Failed to parse JSON from Nova's response")
@@ -441,7 +441,7 @@ class DocumentVerificationAgent:
                         "format": "unknown"
                     }
                 }
-                
+
         except Exception as e:
             self.logger.error(f"Error analyzing document with Nova: {str(e)}", exc_info=True)
             return {
@@ -458,10 +458,10 @@ class DocumentVerificationAgent:
             # Get image and document type from memory if not provided directly
             if not image_base64 and "document_image" in self.agent_memory:
                 image_base64 = self.agent_memory["document_image"]
-                
+
             if not document_type and "document_type" in self.agent_memory:
                 document_type = self.agent_memory["document_type"]
-                
+
             if not image_base64:
                 return {
                     "is_authentic": False,
@@ -469,14 +469,14 @@ class DocumentVerificationAgent:
                     "security_features_detected": [],
                     "potential_issues": ["No image provided"]
                 }
-                
+
             if not document_type:
                 document_type = "unknown document"
-                
+
             # Prepare prompt for Nova Lite
             prompt = f"""
             You are a document authentication expert. Examine this {document_type} image carefully for authenticity.
-            
+
             Look for security features that should be present in an authentic {document_type}, such as:
             - Holograms
             - Microprinting
@@ -484,14 +484,14 @@ class DocumentVerificationAgent:
             - Special inks or UV reactive elements
             - Proper formatting and layout
             - Official seals and signatures
-            
+
             Also check for signs of tampering such as:
             - Uneven text
             - Digital manipulation artifacts
             - Inconsistent fonts
             - Misaligned elements
             - Unusual colors
-            
+
             Format your response as JSON with the following structure:
             {{
                 "is_authentic": true or false,
@@ -500,7 +500,7 @@ class DocumentVerificationAgent:
                 "potential_issues": ["issue1", "issue2"...]
             }}
             """
-            
+
             # Prepare request for Nova Lite
             request_data = {
                 "prompt": prompt,
@@ -508,17 +508,17 @@ class DocumentVerificationAgent:
                 "max_tokens": 500,
                 "image_base64": image_base64
             }
-            
+
             # Invoke Nova Lite through Bedrock
             response = await self.bedrock_client.invoke_model(
                 modelId=self.nova_model_id,
                 body=json.dumps(request_data)
             )
             response_body = json.loads(await response["body"].read())
-            
+
             # Extract response content
             response_text = response_body.get("generation", "")
-            
+
             # Parse the JSON from Nova's response
             try:
                 # Handle possible text before or after JSON
@@ -529,7 +529,7 @@ class DocumentVerificationAgent:
                     authentication_result = json.loads(json_content)
                 else:
                     raise ValueError("Could not find valid JSON in response")
-                
+
                 # Ensure required fields are present
                 if "is_authentic" not in authentication_result:
                     authentication_result["is_authentic"] = True
@@ -539,16 +539,16 @@ class DocumentVerificationAgent:
                     authentication_result["security_features_detected"] = ["standard security features"]
                 if "potential_issues" not in authentication_result:
                     authentication_result["potential_issues"] = []
-                
+
                 # Store authentication result in memory
                 self.agent_memory["authentication_result"] = authentication_result
-                    
+
                 return authentication_result
-                
+
             except (json.JSONDecodeError, ValueError):
                 # If JSON parsing fails, attempt to determine authenticity from text response
                 is_authentic = "not authentic" not in response_text.lower() and "fake" not in response_text.lower()
-                
+
                 # Extract potential security features mentioned
                 security_features = []
                 if "hologram" in response_text.lower():
@@ -557,26 +557,26 @@ class DocumentVerificationAgent:
                     security_features.append("microprinting")
                 if "watermark" in response_text.lower():
                     security_features.append("watermark")
-                
+
                 # Extract potential issues mentioned
                 potential_issues = []
                 if "tamper" in response_text.lower():
                     potential_issues.append("signs of tampering")
                 if "inconsistent" in response_text.lower():
                     potential_issues.append("inconsistent elements")
-                
+
                 authentication_result = {
                     "is_authentic": is_authentic,
                     "confidence": 0.7,
                     "security_features_detected": security_features if security_features else ["standard security features"],
                     "potential_issues": potential_issues
                 }
-                
+
                 # Store authentication result in memory
                 self.agent_memory["authentication_result"] = authentication_result
-                
+
                 return authentication_result
-                
+
         except Exception as e:
             self.logger.error(f"Error verifying document authenticity: {str(e)}", exc_info=True)
             return {
@@ -593,20 +593,20 @@ class DocumentVerificationAgent:
             # Get image and document type from memory if not provided directly
             if not image_base64 and "document_image" in self.agent_memory:
                 image_base64 = self.agent_memory["document_image"]
-                
+
             if not document_type and "document_type" in self.agent_memory:
                 document_type = self.agent_memory["document_type"]
-                
+
             if not image_base64:
                 return {
                     "fields": {},
                     "confidence": {},
                     "error": "No image provided"
                 }
-                
+
             if not document_type:
                 document_type = "unknown document"
-                
+
             # Customize prompt based on document type
             field_prompts = {
                 "passport": "Extract the following fields: full name, date of birth, passport number, expiry date, issuing country, nationality, gender",
@@ -614,19 +614,19 @@ class DocumentVerificationAgent:
                 "id card": "Extract the following fields: full name, date of birth, ID number, expiry date, issuing authority",
                 "birth certificate": "Extract the following fields: name, date of birth, place of birth, parents' names, certificate number"
             }
-            
+
             # Default prompt if document type doesn't match
             extraction_prompt = field_prompts.get(
                 document_type.lower(), 
                 "Extract all key fields from this document including names, dates, identification numbers, and any other relevant information"
             )
-            
+
             # Prepare prompt for Nova Lite
             prompt = f"""
             {extraction_prompt}
-            
+
             Review the document image carefully and extract the requested information.
-            
+
             Format your response as JSON with the following structure:
             {{
                 "fields": {{
@@ -640,11 +640,11 @@ class DocumentVerificationAgent:
                     ...
                 }}
             }}
-            
+
             Use standardized field names like: name, date_of_birth, document_number, expiry_date, issuing_country, etc.
             For each field, provide a confidence score between 0.0 and 1.0.
             """
-            
+
             # Prepare request for Nova Lite
             request_data = {
                 "prompt": prompt,
@@ -652,17 +652,17 @@ class DocumentVerificationAgent:
                 "max_tokens": 1000,
                 "image_base64": image_base64
             }
-            
+
             # Invoke Nova Lite through Bedrock
             response = await self.bedrock_client.invoke_model(
                 modelId=self.nova_model_id,
                 body=json.dumps(request_data)
             )
             response_body = json.loads(await response["body"].read())
-            
+
             # Extract response content
             response_text = response_body.get("generation", "")
-            
+
             # Parse the JSON from Nova's response
             try:
                 # Handle possible text before or after JSON
@@ -675,7 +675,7 @@ class DocumentVerificationAgent:
                     # If no JSON structure, try to parse fields from text
                     fields = {}
                     confidences = {}
-                    
+
                     # Simple parsing of key-value lines
                     lines = response_text.split('\n')
                     for line in lines:
@@ -686,12 +686,12 @@ class DocumentVerificationAgent:
                             if key and value:
                                 fields[key] = value
                                 confidences[key] = 0.7  # Default confidence
-                    
+
                     extraction_result = {
                         "fields": fields,
                         "confidence": confidences
                     }
-                
+
                 # Ensure required fields are present
                 if "fields" not in extraction_result:
                     extraction_result["fields"] = {}
@@ -701,12 +701,12 @@ class DocumentVerificationAgent:
                     for field in extraction_result["fields"]:
                         if field not in extraction_result["confidence"]:
                             extraction_result["confidence"][field] = 0.8
-                
+
                 # Store extracted fields in memory for future use
                 self.agent_memory["extracted_fields"] = extraction_result["fields"]
-                
+
                 return extraction_result
-                
+
             except json.JSONDecodeError:
                 # If JSON parsing fails completely, return empty with error indication
                 self.logger.warning("Failed to parse fields from Nova's response")
@@ -715,7 +715,7 @@ class DocumentVerificationAgent:
                     "confidence": {},
                     "error": "Could not parse fields from response"
                 }
-                
+
         except Exception as e:
             self.logger.error(f"Error extracting document fields: {str(e)}", exc_info=True)
             return {
@@ -731,28 +731,28 @@ class DocumentVerificationAgent:
             # Get fields from memory if not provided directly
             if not fields and "extracted_fields" in self.agent_memory:
                 fields = self.agent_memory["extracted_fields"]
-                
+
             if not fields:
                 return {
                     "is_consistent": False,
                     "confidence": 0.0,
                     "inconsistencies": ["No fields provided for consistency check"]
                 }
-                
+
             # Prepare fields for the prompt
             fields_text = "\n".join([f"{key}: {value}" for key, value in fields.items()])
-            
+
             # Prepare prompt for Nova Lite
             prompt = f"""
             You are a document verification expert. Check the consistency of the following fields extracted from a document:
 
             {fields_text}
-            
+
             Analyze these fields and check for:
             1. Inconsistencies between fields (e.g., impossible dates, conflicting information)
             2. Unusual or suspicious values
             3. Missing critical information
-            
+
             Format your response as JSON with the following structure:
             {{
                 "is_consistent": true or false,
@@ -760,24 +760,24 @@ class DocumentVerificationAgent:
                 "inconsistencies": ["description of issue 1", "description of issue 2", ...]
             }}
             """
-            
+
             # Prepare request for Nova Lite
             request_data = {
                 "prompt": prompt,
                 "temperature": 0.2,
                 "max_tokens": 500
             }
-            
+
             # Invoke Nova Lite through Bedrock
             response = await self.bedrock_client.invoke_model(
                 modelId=self.nova_model_id,
                 body=json.dumps(request_data)
             )
             response_body = json.loads(await response["body"].read())
-            
+
             # Extract response content
             response_text = response_body.get("generation", "")
-            
+
             # Parse the JSON from Nova's response
             try:
                 # Handle possible text before or after JSON
@@ -789,13 +789,13 @@ class DocumentVerificationAgent:
                 else:
                     # Default values based on text analysis
                     is_consistent = "inconsistent" not in response_text.lower() and "issue" not in response_text.lower()
-                    
+
                     consistency_result = {
                         "is_consistent": is_consistent,
                         "confidence": 0.7,
                         "inconsistencies": []
                     }
-                
+
                 # Ensure required fields are present
                 if "is_consistent" not in consistency_result:
                     consistency_result["is_consistent"] = True
@@ -803,27 +803,27 @@ class DocumentVerificationAgent:
                     consistency_result["confidence"] = 0.8
                 if "inconsistencies" not in consistency_result:
                     consistency_result["inconsistencies"] = []
-                
+
                 # Store consistency result in memory
                 self.agent_memory["consistency_result"] = consistency_result
-                    
+
                 return consistency_result
-                
+
             except json.JSONDecodeError:
                 # If JSON parsing fails, determine consistency from response text
                 is_consistent = "inconsistent" not in response_text.lower() and "issue" not in response_text.lower()
-                
+
                 consistency_result = {
                     "is_consistent": is_consistent,
                     "confidence": 0.6,
                     "inconsistencies": ["Could not properly analyze consistency"]
                 }
-                
+
                 # Store consistency result in memory
                 self.agent_memory["consistency_result"] = consistency_result
-                
+
                 return consistency_result
-                
+
         except Exception as e:
             self.logger.error(f"Error checking document consistency: {str(e)}", exc_info=True)
             return {
