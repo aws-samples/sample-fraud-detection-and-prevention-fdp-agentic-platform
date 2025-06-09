@@ -66,6 +66,7 @@ class DocumentVerificationAgent:
             # Create initial verification record
             current_time = datetime.now(timezone.utc).isoformat()
             verification = {
+                'pk': verification_id,
                 'verification_id': verification_id,
                 'status': VerificationStatus.IN_PROGRESS,
                 'document_type': request.document_type,
@@ -175,7 +176,7 @@ class DocumentVerificationAgent:
             """
 
             # Run the agent with context
-            result = await self.agent.run(task, context=context)
+            result = await self.agent(task, context=context)
 
             # Process the result and update verification status
             await self._process_agent_result(verification_id, result)
@@ -213,7 +214,7 @@ class DocumentVerificationAgent:
             """
 
             # Run the agent with context
-            result = await self.agent.run(task, context=context)
+            result = await self.agent(task, context=context)
 
             # Process the result and update verification status
             await self._process_agent_result(verification_id, result)

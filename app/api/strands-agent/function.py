@@ -11,6 +11,9 @@ from lib.utils import create_api_response
 from lib.document_verification_agent import DocumentVerificationAgent
 from lib.models import AgentRequest
 
+# Import the extend_dynamodb_service function
+from lib.dynamodb_extensions import extend_dynamodb_service
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger(__name__)
@@ -21,13 +24,17 @@ load_dotenv()
 def initialize_services():
     """Initialize services at module level"""
 
+    bedrock_client = boto3.client("bedrock-runtime")
+
     # Import these here to avoid circular imports
     from lib.dynamodb import DynamoDBService
     from lib.s3 import S3Service
 
-    bedrock_client = boto3.client("bedrock-runtime")
     s3_service = S3Service()
     db_service = DynamoDBService()
+
+    # Extend the DynamoDBService with agent verification methods
+    db_service = extend_dynamodb_service(db_service)
 
     return {
         'bedrock_client': bedrock_client,
