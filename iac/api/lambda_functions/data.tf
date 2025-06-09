@@ -74,6 +74,8 @@ data "aws_iam_policy_document" "this" {
       lookup(data.terraform_remote_state.dynamodb.outputs.arn, "agent", null),
       lookup(data.terraform_remote_state.dynamodb.outputs.arn, "config", null),
       lookup(data.terraform_remote_state.dynamodb.outputs.arn, "prompt", null),
+      lookup(data.terraform_remote_state.dynamodb.outputs.arn, "strands", null),
+      lookup(data.terraform_remote_state.dynamodb.outputs.arn, "agent2", null),
     ]
   }
 
@@ -100,10 +102,9 @@ data "aws_iam_policy_document" "this" {
       "bedrock:InvokeModel",
     ]
     resources = [format(
-      "arn:%s:bedrock:%s:%s:foundation-model/*",
+      "arn:%s:bedrock:%s::foundation-model/*",
       data.aws_partition.this.id,
       data.aws_region.this.name,
-      data.aws_caller_identity.this.account_id,
     )]
   }
 }

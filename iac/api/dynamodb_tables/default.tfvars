@@ -18,7 +18,7 @@ q = {
 
 r = [{
   key  = "agent"
-  name = "ftp-agent"
+  name = "fdp-agent"
   attr = "pk"
   }, {
   key  = "config"
@@ -27,5 +27,13 @@ r = [{
   }, {
   key  = "prompt"
   name = "fdp-prompt"
+  attr = "pk"
+  }, {
+  key  = "agent2"
+  name = "fdp-agent-verifications"
+  attr = "pk"
+  }, {
+  key  = "strands"
+  name = "fdp-strands"
   attr = "pk"
 }]

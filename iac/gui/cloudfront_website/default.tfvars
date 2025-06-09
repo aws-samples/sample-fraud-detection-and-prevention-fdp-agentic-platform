@@ -4,7 +4,7 @@
 q = {
   description  = "FDP WEBSITE"
   logs_prefix  = "cdn_website_logs/"
-  cache_viewer = "https-only"
+  cache_viewer = "redirect-to-https"
   default_ttl  = 3600
   max_ttl      = 86400
   min_ttl      = 0

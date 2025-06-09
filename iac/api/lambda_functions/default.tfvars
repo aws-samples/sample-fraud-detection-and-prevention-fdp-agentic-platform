@@ -46,6 +46,12 @@ r = [{
   path = "../../../app/api/prompt-manager"
   file = "lib/requirements.txt"
   }, {
+  key  = "strands"
+  name = "fdp-lambda-strands"
+  desc = "FDP LAMBDA STRANDS"
+  path = "../../../app/api/strands-agent"
+  file = "lib/requirements.txt"
+  }, {
   key  = "userpool"
   name = "fdp-user-pool"
   desc = "FDP LAMBDA COGNITO"
