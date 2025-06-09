@@ -46,7 +46,7 @@ function App() {
   const menuItems = [
     { id: 'dashboard', text: 'Dashboard', icon: <ChevronRightIcon />, tooltip: 'Dashboard' },
     { id: 'analyzer', text: 'Document Analyzer', icon: <DocumentScannerIcon />, tooltip: 'Analyze Documents' },
-    { id: 'verification', text: 'Advanced Verification', icon: <VerifiedUserIcon />, tooltip: 'Advanced Verification' },
+    //{ id: 'verification', text: 'Advanced Verification', icon: <VerifiedUserIcon />, tooltip: 'Advanced Verification' },
     { id: 'prompts', text: 'Prompt Manager', icon: <AutoAwesomeIcon />, tooltip: 'Manage Prompts' },
     { id: 'configs', text: 'Configuration', icon: <SettingsIcon />, tooltip: 'System Configuration' },
     { id: 'signout', text: 'Sign Out', icon: <LogoutIcon />, tooltip: 'Sign Out', onClick: () => auth.removeUser() },
