@@ -37,13 +37,13 @@ class AgentDynamoDBService:
                     TableName=self.agent_verifications_table_name,
                     KeySchema=[
                         {
-                            'AttributeName': 'verification_id',
+                            'AttributeName': 'pk',
                             'KeyType': 'HASH'
                         }
                     ],
                     AttributeDefinitions=[
                         {
-                            'AttributeName': 'verification_id',
+                            'AttributeName': 'pk',
                             'AttributeType': 'S'
                         }
                     ],
@@ -86,7 +86,7 @@ class AgentDynamoDBService:
         try:
             logger.info(f"Getting agent verification with id: {verification_id}")
             response = self.agent_verifications_table.get_item(
-                Key={'verification_id': verification_id}
+                Key={'pk': verification_id}  # Use pk instead of verification_id
             )
 
             item = response.get('Item')
