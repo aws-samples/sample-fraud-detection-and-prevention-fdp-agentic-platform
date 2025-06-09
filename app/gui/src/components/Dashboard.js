@@ -66,12 +66,12 @@ const Dashboard = ({ setSelectedView }) => {
       description: 'Upload and analyze documents to extract information and detect potential fraud.',
       icon: <DocumentScannerIcon fontSize="large" />,
     },
-    {
+    /*{
       id: 'verification',
       title: 'Advanced Verification',
       description: 'Use AI agent technology for in-depth document verification with interactive feedback.',
       icon: <VerifiedUserIcon fontSize="large" />,
-    },
+    },*/
     {
       id: 'prompts',
       title: 'Prompt Manager',
