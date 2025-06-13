@@ -100,11 +100,11 @@ data "aws_iam_policy_document" "this" {
     effect  = "Allow"
     actions = [
       "bedrock:InvokeModel",
+      "bedrock-runtime:InvokeModelWithResponseStream",
     ]
-    resources = [format(
-      "arn:%s:bedrock:%s::foundation-model/*",
-      data.aws_partition.this.id,
-      data.aws_region.this.name,
-    )]
+    resources = [
+      format("arn:%s:bedrock:%s::foundation-model/*", data.aws_partition.this.id, "us-east-1"),
+      format("arn:%s:bedrock:%s::foundation-model/*", data.aws_partition.this.id, data.aws_region.this.name),
+    ]
   }
 }
