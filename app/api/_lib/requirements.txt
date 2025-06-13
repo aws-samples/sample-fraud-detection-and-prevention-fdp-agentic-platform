@@ -31,7 +31,7 @@ starlette==0.47.0
 strands-agents==0.1.7
 termcolor>=2.4.0,<3
 typing_extensions>=4.14.0
-urllib3==2.4.0
+urllib3>=1.26.5,<2
 uvicorn==0.34.3
 wcwidth==0.2.13
 wheel==0.45.1
