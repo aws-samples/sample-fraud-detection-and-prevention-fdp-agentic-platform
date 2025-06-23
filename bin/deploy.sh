@@ -198,15 +198,15 @@ case ${FDP_DIR} in iac*)
     if [ -n "${BACK}" ]; then OPTIONS=" ${OPTIONS} -var fdp_${FRONT}=${BACK}"; fi
   done <<< "$FDP_TFVARS"
 
-  echo "[EXEC] terragrunt run-all init -backend-config region=${FDP_TFVAR_REGION} -backend-config bucket=${FDP_TFVAR_BUCKET} --no-color"
-  terragrunt run-all init -backend-config region="${FDP_TFVAR_REGION}" -backend-config="bucket=${FDP_TFVAR_BUCKET}" --no-color || { echo "[ERROR] terragrunt run-all init failed. aborting..."; cd -; exit 1; }
+  echo "[EXEC] terragrunt init --all -backend-config region=${FDP_TFVAR_REGION} -backend-config bucket=${FDP_TFVAR_BUCKET} --no-color"
+  terragrunt init --all -backend-config region="${FDP_TFVAR_REGION}" -backend-config="bucket=${FDP_TFVAR_BUCKET}" --no-color || { echo "[ERROR] terragrunt run-all init failed. aborting..."; cd -; exit 1; }
 
   if [ -n "${FDP_CLEANUP}" ] && [ "${FDP_CLEANUP}" == "true" ]; then
-    echo "[EXEC] terragrunt run-all destroy -auto-approve -var-file default.tfvars $OPTIONS --no-color"
-    echo "Y" | terragrunt run-all destroy -auto-approve -var-file default.tfvars $OPTIONS --no-color || { echo "[ERROR] terragrunt run-all destroy failed. aborting..."; cd -; exit 1; }
+    echo "[EXEC] terragrunt destroy --all -auto-approve -var-file default.tfvars $OPTIONS --no-color"
+    echo "Y" | terragrunt destroy --all -auto-approve -var-file default.tfvars $OPTIONS --no-color || { echo "[ERROR] terragrunt run-all destroy failed. aborting..."; cd -; exit 1; }
   else
-    echo "[EXEC] terragrunt run-all apply -auto-approve -var-file default.tfvars $OPTIONS --no-color"
-    echo "Y" | terragrunt run-all apply -auto-approve -var-file default.tfvars $OPTIONS --no-color || { echo "[ERROR] terragrunt run-all apply failed. aborting..."; cd -; exit 1; }
+    echo "[EXEC] terragrunt apply --all -auto-approve -var-file default.tfvars $OPTIONS --no-color"
+    echo "Y" | terragrunt apply --all -auto-approve -var-file default.tfvars $OPTIONS --no-color || { echo "[ERROR] terragrunt run-all apply failed. aborting..."; cd -; exit 1; }
   fi
 
 esac
