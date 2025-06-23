@@ -115,10 +115,10 @@ In previous step, you should have successfully deployed the GUI module.
 In order to access the CloudFront URL of the GUI, run the following commands:
 
 ```sh
-QUERY="SecretList[?starts_with(Name,'fdp-gui-secrets')].Name"
-ID=$(aws secretsmanager list-secrets --region us-east-1 --output text --query $QUERY || echo "NA")
-SECRET=$(aws secretsmanager get-secret-value --region us-east-1 --secret-id "${ID}" --query SecretString || echo "{}")
-echo $SECRET | jq -r . | jq .FDP_TFVAR_CLOUDFRONT_URL
+_QUERY="SecretList[?starts_with(Name,'fdp-gui-secrets')].Name"
+_ID=$(aws secretsmanager list-secrets --region us-east-1 --output text --query $_QUERY || echo "NA")
+_SECRET=$(aws secretsmanager get-secret-value --region us-east-1 --secret-id "$_ID" --query SecretString || echo "{}")
+echo $_SECRET | jq -r . | jq .FDP_TFVAR_CLOUDFRONT_URL
 ```
 
 > REMINDER: Make sure to replace *us-east-1* with your target AWS region
@@ -149,6 +149,12 @@ commands:
 
 > REMINDER: Make sure to replace *us-east-1* with your target AWS region and
 *fdp-backend-us-east-1* with your S3 bucket.
+
+## Cost Calculation
+
+A detailed cost calculation for this solution is available in this
+[document](./docs/cost_calculation.md). This includes a breakdown of costs
+per AWS service, assumptions made, and cost optimization recommendations.
 
 ## Authors
 
