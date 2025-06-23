@@ -7,7 +7,7 @@ locals {
     ? data.terraform_remote_state.s3.outputs.fdp_gid : var.fdp_gid
   )
   replicas = (
-    data.terraform_remote_state.s3.outputs.region2 == data.aws_region.this.name
+    data.terraform_remote_state.s3.outputs.region2 == data.aws_region.this.region
     ? [] : [data.terraform_remote_state.s3.outputs.region2]
   )
   attributes = [

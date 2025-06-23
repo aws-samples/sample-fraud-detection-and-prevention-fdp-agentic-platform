@@ -29,7 +29,7 @@ locals {
       resources = format(
         "arn:%s:s3:::%s",
         data.aws_partition.this.partition,
-        var.fdp_backend_bucket[data.aws_region.this.name]
+        var.fdp_backend_bucket[data.aws_region.this.region]
       )
     },
     {
@@ -37,7 +37,7 @@ locals {
       resources = format(
         "arn:%s:s3:::%s/*",
         data.aws_partition.this.partition,
-        var.fdp_backend_bucket[data.aws_region.this.name]
+        var.fdp_backend_bucket[data.aws_region.this.region]
       )
     },
   ]

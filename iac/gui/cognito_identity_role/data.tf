@@ -6,8 +6,8 @@ data "terraform_remote_state" "cognito" {
   config = {
     skip_region_validation = true
 
-    region = data.aws_region.this.name
-    bucket = var.fdp_backend_bucket[data.aws_region.this.name]
+    region = data.aws_region.this.region
+    bucket = var.fdp_backend_bucket[data.aws_region.this.region]
     key    = format(var.fdp_backend_pattern, "cognito_identity_pool")
   }
 }
@@ -17,8 +17,8 @@ data "terraform_remote_state" "auth" {
   config = {
     skip_region_validation = true
 
-    region = data.aws_region.this.name
-    bucket = var.fdp_backend_bucket[data.aws_region.this.name]
+    region = data.aws_region.this.region
+    bucket = var.fdp_backend_bucket[data.aws_region.this.region]
     key    = format(var.fdp_backend_pattern, "iam_role_cognito_auth")
   }
 }
@@ -28,8 +28,8 @@ data "terraform_remote_state" "unauth" {
   config = {
     skip_region_validation = true
 
-    region = data.aws_region.this.name
-    bucket = var.fdp_backend_bucket[data.aws_region.this.name]
+    region = data.aws_region.this.region
+    bucket = var.fdp_backend_bucket[data.aws_region.this.region]
     key    = format(var.fdp_backend_pattern, "iam_role_cognito_unauth")
   }
 }

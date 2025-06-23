@@ -10,7 +10,7 @@ locals {
     FDP_ID              = local.fdp_gid
     FDP_LOGGING         = var.q.logging
     FDP_ACCOUNT         = data.aws_caller_identity.this.account_id
-    FDP_REGION          = data.aws_region.this.name
+    FDP_REGION          = data.aws_region.this.region
     FDP_CHECK_REGION    = data.terraform_remote_state.s3.outputs.region2
     FDP_API_URL         = data.terraform_remote_state.cognito.outputs.api_url
     FDP_AUTH_URL        = data.terraform_remote_state.cognito.outputs.auth_url

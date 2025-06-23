@@ -7,7 +7,7 @@ locals {
     ? data.terraform_remote_state.s3.outputs.fdp_gid : var.fdp_gid
   )
   replicas = (
-    data.terraform_remote_state.s3.outputs.region2 == data.aws_region.this.name
+    data.terraform_remote_state.s3.outputs.region2 == data.aws_region.this.region
     ? [] : [data.terraform_remote_state.s3.outputs.region2]
   )
   secret = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)

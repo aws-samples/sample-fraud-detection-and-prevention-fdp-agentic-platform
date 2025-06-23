@@ -3,7 +3,7 @@
 
 data "aws_service_principal" "this" {
   service_name = "apigateway"
-  region       = data.aws_region.this.name
+  region       = data.aws_region.this.region
 }
 
 data "aws_iam_policy_document" "this" {
@@ -23,8 +23,8 @@ data "terraform_remote_state" "s3" {
   config = {
     skip_region_validation = true
 
-    region = data.aws_region.this.name
-    bucket = var.fdp_backend_bucket[data.aws_region.this.name]
+    region = data.aws_region.this.region
+    bucket = var.fdp_backend_bucket[data.aws_region.this.region]
     key    = format(var.fdp_backend_pattern, "s3_runtime")
   }
 }

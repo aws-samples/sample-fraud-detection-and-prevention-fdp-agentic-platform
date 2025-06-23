@@ -3,12 +3,12 @@
 
 data "aws_service_principal" "agw" {
   service_name = "apigateway"
-  region       = data.aws_region.this.name
+  region       = data.aws_region.this.region
 }
 
 data "aws_service_principal" "cognito" {
   service_name = "cognito-idp"
-  region       = data.aws_region.this.name
+  region       = data.aws_region.this.region
 }
 
 data "terraform_remote_state" "cognito" {
@@ -16,8 +16,8 @@ data "terraform_remote_state" "cognito" {
   config = {
     skip_region_validation = true
 
-    region = data.aws_region.this.name
-    bucket = var.fdp_backend_bucket[data.aws_region.this.name]
+    region = data.aws_region.this.region
+    bucket = var.fdp_backend_bucket[data.aws_region.this.region]
     key    = format(var.fdp_backend_pattern, "cognito_user_pool")
   }
 }
@@ -27,8 +27,8 @@ data "terraform_remote_state" "iam_logs" {
   config = {
     skip_region_validation = true
 
-    region = data.aws_region.this.name
-    bucket = var.fdp_backend_bucket[data.aws_region.this.name]
+    region = data.aws_region.this.region
+    bucket = var.fdp_backend_bucket[data.aws_region.this.region]
     key    = format(var.fdp_backend_pattern, "iam_role_agw_logs")
   }
 }
@@ -38,8 +38,8 @@ data "terraform_remote_state" "iam_sqs" {
   config = {
     skip_region_validation = true
 
-    region = data.aws_region.this.name
-    bucket = var.fdp_backend_bucket[data.aws_region.this.name]
+    region = data.aws_region.this.region
+    bucket = var.fdp_backend_bucket[data.aws_region.this.region]
     key    = format(var.fdp_backend_pattern, "iam_role_agw_sqs")
   }
 }
@@ -49,8 +49,8 @@ data "terraform_remote_state" "lambda" {
   config = {
     skip_region_validation = true
 
-    region = data.aws_region.this.name
-    bucket = var.fdp_backend_bucket[data.aws_region.this.name]
+    region = data.aws_region.this.region
+    bucket = var.fdp_backend_bucket[data.aws_region.this.region]
     key    = format(var.fdp_backend_pattern, "lambda_functions")
   }
 }
@@ -60,8 +60,8 @@ data "terraform_remote_state" "s3" {
   config = {
     skip_region_validation = true
 
-    region = data.aws_region.this.name
-    bucket = var.fdp_backend_bucket[data.aws_region.this.name]
+    region = data.aws_region.this.region
+    bucket = var.fdp_backend_bucket[data.aws_region.this.region]
     key    = format(var.fdp_backend_pattern, "s3_runtime")
   }
 }

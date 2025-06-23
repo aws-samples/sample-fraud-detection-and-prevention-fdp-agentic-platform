@@ -15,7 +15,7 @@ module "lambda" {
   timeout       = var.q.timeout
   tracing_mode  = var.q.tracing_mode
   store_on_s3   = true
-  s3_bucket     = var.fdp_backend_bucket[data.aws_region.this.name]
+  s3_bucket     = var.fdp_backend_bucket[data.aws_region.this.region]
   s3_prefix     = format(data.terraform_remote_state.s3.outputs.prefix, var.r[count.index]["name"])
 
   source_path = {
@@ -26,7 +26,7 @@ module "lambda" {
   }
 
   create_role        = true
-  role_name          = format("%s-role-%s-%s", var.r[count.index]["name"], data.aws_region.this.name, local.fdp_gid)
+  role_name          = format("%s-role-%s-%s", var.r[count.index]["name"], data.aws_region.this.region, local.fdp_gid)
   role_path          = "/service-role/"
   policy_path        = "/service-role/"
   attach_policies    = true

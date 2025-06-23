@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT-0
 
 data "aws_secretsmanager_secret" "this" {
-  name = format("%s-%s-%s", var.q.secret_search, data.aws_region.this.name, local.fdp_gid)
+  name = format("%s-%s-%s", var.q.secret_search, data.aws_region.this.region, local.fdp_gid)
 }
 
 data "aws_secretsmanager_secret_version" "this" {
@@ -14,8 +14,8 @@ data "terraform_remote_state" "cloudfront" {
   config = {
     skip_region_validation = true
 
-    region = data.aws_region.this.name
-    bucket = var.fdp_backend_bucket[data.aws_region.this.name]
+    region = data.aws_region.this.region
+    bucket = var.fdp_backend_bucket[data.aws_region.this.region]
     key    = format(var.fdp_backend_pattern, "cloudfront_website")
   }
 }
@@ -25,8 +25,8 @@ data "terraform_remote_state" "s3" {
   config = {
     skip_region_validation = true
 
-    region = data.aws_region.this.name
-    bucket = var.fdp_backend_bucket[data.aws_region.this.name]
+    region = data.aws_region.this.region
+    bucket = var.fdp_backend_bucket[data.aws_region.this.region]
     key    = format(var.fdp_backend_pattern, "s3_website")
   }
 }

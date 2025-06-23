@@ -71,7 +71,7 @@ resource "aws_cognito_user_pool" "this" {
   # sms_configuration {
   #   external_id    = data.terraform_remote_state.iam.outputs.external_id
   #   sns_caller_arn = data.terraform_remote_state.iam.outputs.arn
-  #   sns_region     = data.aws_region.this.name
+  #   sns_region     = data.aws_region.this.region
   # }
 
   # software_token_mfa_configuration {

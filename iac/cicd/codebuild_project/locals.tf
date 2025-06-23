@@ -11,17 +11,17 @@ locals {
     {
       name  = "AWS_DEFAULT_REGION"
       type  = "PLAINTEXT"
-      value = data.aws_region.this.name
+      value = data.aws_region.this.region
     },
     {
       name  = "AWS_REGION"
       type  = "PLAINTEXT"
-      value = data.aws_region.this.name
+      value = data.aws_region.this.region
     },
     {
       name  = "FDP_TFVAR_REGION"
       type  = "PLAINTEXT"
-      value = data.aws_region.this.name
+      value = data.aws_region.this.region
     },
     {
       name  = "FDP_DIR"
@@ -36,7 +36,7 @@ locals {
     {
       name  = "FDP_TFVAR_BUCKET"
       type  = "PLAINTEXT"
-      value = var.fdp_backend_bucket[data.aws_region.this.name]
+      value = var.fdp_backend_bucket[data.aws_region.this.region]
     },
     {
       name  = "FDP_TFVAR_BACKEND_BUCKET"

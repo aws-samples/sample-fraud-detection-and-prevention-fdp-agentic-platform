@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT-0
 
 resource "aws_security_group" "this" {
-  name        = format("%s-%s-%s", var.q.name, data.aws_region.this.name, local.fdp_gid)
+  name        = format("%s-%s-%s", var.q.name, data.aws_region.this.region, local.fdp_gid)
   description = var.q.description
   vpc_id      = data.aws_vpc.this.id
 

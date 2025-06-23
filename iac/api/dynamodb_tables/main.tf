@@ -6,7 +6,7 @@ resource "aws_dynamodb_table" "this" {
   #checkov:skip=CKV_AWS_119:This solution leverages KMS encryption using AWS managed keys instead of CMKs (false positive)
   #checkov:skip=CKV2_AWS_16:This solution does not leverages DynamoDB auto-scaling capabilities (false positive)
 
-  count            = data.aws_region.this.name == element(keys(var.fdp_backend_bucket), 0) ? length(var.r) : 0
+  count            = data.aws_region.this.region == element(keys(var.fdp_backend_bucket), 0) ? length(var.r) : 0
   name             = format("%s-%s", var.r[count.index]["name"], local.fdp_gid)
   hash_key         = strcontains(var.r[count.index]["attr"], var.q.hash_key) ? var.q.hash_key : null
   range_key        = strcontains(var.r[count.index]["attr"], var.q.range_key) ? var.q.range_key : null

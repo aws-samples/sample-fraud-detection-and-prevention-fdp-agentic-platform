@@ -10,7 +10,7 @@ resource "aws_s3_bucket" "this" {
   #checkov:skip=CKV2_AWS_61:This solution does not require lifecycle for S3 based health checks (false positive)
   #checkov:skip=CKV2_AWS_62:This solution does not events notification lifecycle for S3 based health checks (false positive)
 
-  bucket        = format("aws-waf-logs-%s-%s-%s", var.q.bucket, data.aws_region.this.name, local.fdp_gid)
+  bucket        = format("aws-waf-logs-%s-%s-%s", var.q.bucket, data.aws_region.this.region, local.fdp_gid)
   force_destroy = var.q.force_destroy
 
   lifecycle {
@@ -35,6 +35,6 @@ resource "aws_s3_bucket_acl" "this" {
 
 resource "aws_s3_bucket_logging" "this" {
   bucket        = aws_s3_bucket.this.id
-  target_bucket = var.fdp_backend_bucket[data.aws_region.this.name]
+  target_bucket = var.fdp_backend_bucket[data.aws_region.this.region]
   target_prefix = var.q.logs_prefix
 }
