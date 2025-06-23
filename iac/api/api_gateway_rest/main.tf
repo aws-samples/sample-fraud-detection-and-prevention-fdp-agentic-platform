@@ -8,7 +8,7 @@ resource "aws_api_gateway_rest_api" "this" {
   body = templatefile(var.q.file, {
     title       = format("%s-%s", var.q.name, local.fdp_gid)
     version     = var.q.version
-    region      = data.aws_region.this.name
+    region      = data.aws_region.this.region
     cognito_key = format("%s-%s", var.q.name, local.fdp_gid)
     cognito_arn = data.terraform_remote_state.cognito.outputs.arn
     lambda_arn  = data.terraform_remote_state.lambda.outputs.invoke_arn

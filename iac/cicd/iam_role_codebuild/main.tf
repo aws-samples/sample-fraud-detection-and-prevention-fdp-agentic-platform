@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT-0
 
 resource "aws_iam_role" "this" {
-  name               = format("%s-%s-%s", var.q.name, data.aws_region.this.name, local.fdp_gid)
+  name               = format("%s-%s-%s", var.q.name, data.aws_region.this.region, local.fdp_gid)
   description        = var.q.description
   path               = var.q.path
   assume_role_policy = data.aws_iam_policy_document.role.json
@@ -13,7 +13,7 @@ resource "aws_iam_role" "this" {
 }
 
 resource "aws_iam_policy" "this" {
-  name        = format("%s-%s-%s", var.q.name, data.aws_region.this.name, local.fdp_gid)
+  name        = format("%s-%s-%s", var.q.name, data.aws_region.this.region, local.fdp_gid)
   description = var.q.description
   path        = var.q.path
   policy      = data.aws_iam_policy_document.policy.json

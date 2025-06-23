@@ -12,8 +12,8 @@ data "terraform_remote_state" "agw_mock" {
   config = {
     skip_region_validation = true
 
-    region = data.aws_region.this.name
-    bucket = var.fdp_backend_bucket[data.aws_region.this.name]
+    region = data.aws_region.this.region
+    bucket = var.fdp_backend_bucket[data.aws_region.this.region]
     key    = format(var.fdp_backend_pattern, "api_gateway_mock")
   }
 }
@@ -23,8 +23,8 @@ data "terraform_remote_state" "agw_rest" {
   config = {
     skip_region_validation = true
 
-    region = data.aws_region.this.name
-    bucket = var.fdp_backend_bucket[data.aws_region.this.name]
+    region = data.aws_region.this.region
+    bucket = var.fdp_backend_bucket[data.aws_region.this.region]
     key    = format(var.fdp_backend_pattern, "api_gateway_rest")
   }
 }
@@ -34,8 +34,8 @@ data "terraform_remote_state" "cognito" {
   config = {
     skip_region_validation = true
 
-    region = data.aws_region.this.name
-    bucket = var.fdp_backend_bucket[data.aws_region.this.name]
+    region = data.aws_region.this.region
+    bucket = var.fdp_backend_bucket[data.aws_region.this.region]
     key    = format(var.fdp_backend_pattern, "cognito_user_pool")
   }
 }
@@ -45,8 +45,8 @@ data "terraform_remote_state" "client" {
   config = {
     skip_region_validation = true
 
-    region = data.aws_region.this.name
-    bucket = var.fdp_backend_bucket[data.aws_region.this.name]
+    region = data.aws_region.this.region
+    bucket = var.fdp_backend_bucket[data.aws_region.this.region]
     key    = format(var.fdp_backend_pattern, "cognito_user_client_api")
   }
 }
@@ -56,8 +56,8 @@ data "terraform_remote_state" "domain" {
   config = {
     skip_region_validation = true
 
-    region = data.aws_region.this.name
-    bucket = var.fdp_backend_bucket[data.aws_region.this.name]
+    region = data.aws_region.this.region
+    bucket = var.fdp_backend_bucket[data.aws_region.this.region]
     key    = format(var.fdp_backend_pattern, "cognito_user_domain")
   }
 }
@@ -67,8 +67,8 @@ data "terraform_remote_state" "s3" {
   config = {
     skip_region_validation = true
 
-    region = data.aws_region.this.name
-    bucket = var.fdp_backend_bucket[data.aws_region.this.name]
+    region = data.aws_region.this.region
+    bucket = var.fdp_backend_bucket[data.aws_region.this.region]
     key    = format(var.fdp_backend_pattern, "s3_runtime")
   }
 }

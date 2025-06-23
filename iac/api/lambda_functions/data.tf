@@ -6,8 +6,8 @@ data "terraform_remote_state" "cognito" {
   config = {
     skip_region_validation = true
 
-    region = data.aws_region.this.name
-    bucket = var.fdp_backend_bucket[data.aws_region.this.name]
+    region = data.aws_region.this.region
+    bucket = var.fdp_backend_bucket[data.aws_region.this.region]
     key    = format(var.fdp_backend_pattern, "cognito_user_domain")
   }
 }
@@ -17,8 +17,8 @@ data "terraform_remote_state" "dynamodb" {
   config = {
     skip_region_validation = true
 
-    region = data.aws_region.this.name
-    bucket = var.fdp_backend_bucket[data.aws_region.this.name]
+    region = data.aws_region.this.region
+    bucket = var.fdp_backend_bucket[data.aws_region.this.region]
     key    = format(var.fdp_backend_pattern, "dynamodb_tables")
   }
 }
@@ -28,8 +28,8 @@ data "terraform_remote_state" "s3" {
   config = {
     skip_region_validation = true
 
-    region = data.aws_region.this.name
-    bucket = var.fdp_backend_bucket[data.aws_region.this.name]
+    region = data.aws_region.this.region
+    bucket = var.fdp_backend_bucket[data.aws_region.this.region]
     key    = format(var.fdp_backend_pattern, "s3_runtime")
   }
 }
@@ -39,8 +39,8 @@ data "terraform_remote_state" "sgr" {
   config = {
     skip_region_validation = true
 
-    region = data.aws_region.this.name
-    bucket = var.fdp_backend_bucket[data.aws_region.this.name]
+    region = data.aws_region.this.region
+    bucket = var.fdp_backend_bucket[data.aws_region.this.region]
     key    = format(var.fdp_backend_pattern, "security_group")
   }
 }
@@ -50,8 +50,8 @@ data "terraform_remote_state" "vpc" {
   config = {
     skip_region_validation = true
 
-    region = data.aws_region.this.name
-    bucket = var.fdp_backend_bucket[data.aws_region.this.name]
+    region = data.aws_region.this.region
+    bucket = var.fdp_backend_bucket[data.aws_region.this.region]
     key    = format(var.fdp_backend_pattern, "vpc_subnet")
   }
 }
@@ -104,7 +104,7 @@ data "aws_iam_policy_document" "this" {
     ]
     resources = [
       format("arn:%s:bedrock:%s::foundation-model/*", data.aws_partition.this.id, "us-east-1"),
-      format("arn:%s:bedrock:%s::foundation-model/*", data.aws_partition.this.id, data.aws_region.this.name),
+      format("arn:%s:bedrock:%s::foundation-model/*", data.aws_partition.this.id, data.aws_region.this.region),
     ]
   }
 }

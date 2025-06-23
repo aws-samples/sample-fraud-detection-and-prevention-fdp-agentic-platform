@@ -41,13 +41,13 @@ output "auth_url" {
   value = (
     aws_cognito_user_pool_domain.this.domain != data.terraform_remote_state.cognito.outputs.name
     ? format("https://%s", aws_cognito_user_pool_domain.this.domain)
-    : format("https://%s.auth.%s.amazoncognito.com", aws_cognito_user_pool_domain.this.domain, data.aws_region.this.name)
+    : format("https://%s.auth.%s.amazoncognito.com", aws_cognito_user_pool_domain.this.domain, data.aws_region.this.region)
   )
 }
 
 output "api_url" {
   value = (
     try(trimspace(var.fdp_custom_domain), "") == ""
-    ? "" : format(format("https://%s", var.q.api_pattern), data.aws_region.this.name, var.fdp_custom_domain)
+    ? "" : format(format("https://%s", var.q.api_pattern), data.aws_region.this.region, var.fdp_custom_domain)
   )
 }

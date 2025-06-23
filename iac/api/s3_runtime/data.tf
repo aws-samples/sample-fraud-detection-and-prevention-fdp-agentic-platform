@@ -3,8 +3,8 @@
 
 data "terraform_remote_state" "s3" {
   count = (
-    data.aws_region.this.name == element(keys(var.fdp_backend_bucket), 1)
-    && data.aws_region.this.name != local.region ? 1 : 0
+    data.aws_region.this.region == element(keys(var.fdp_backend_bucket), 1)
+    && data.aws_region.this.region != local.region ? 1 : 0
   )
   backend = "s3"
   config = {

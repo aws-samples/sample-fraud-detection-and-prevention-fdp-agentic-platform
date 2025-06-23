@@ -44,7 +44,7 @@ resource "aws_secretsmanager_secret" "this" {
   #checkov:skip=CKV_AWS_149:This solution leverages KMS encryption using AWS managed keys instead of CMKs (false positive)
   #checkov:skip=CKV2_AWS_57:This solution does not require key automatic rotation -- managed by AWS (false positive)
 
-  name        = format("%s-%s-%s", var.q.secret_name, data.aws_region.this.name, local.fdp_gid)
+  name        = format("%s-%s-%s", var.q.secret_name, data.aws_region.this.region, local.fdp_gid)
   description = var.q.description
 
   force_overwrite_replica_secret = true

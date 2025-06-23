@@ -6,7 +6,7 @@ resource "aws_cognito_user_pool_domain" "this" {
   domain = (
     try(trimspace(var.fdp_custom_domain), "") == ""
     ? data.terraform_remote_state.cognito.outputs.name
-    : format(var.q.auth_pattern, data.aws_region.this.name, var.fdp_custom_domain)
+    : format(var.q.auth_pattern, data.aws_region.this.region, var.fdp_custom_domain)
   )
   certificate_arn = (
     try(trimspace(var.fdp_custom_domain), "") == ""
