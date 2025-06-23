@@ -153,7 +153,7 @@ commands:
 ## Cost Calculation
 
 A detailed cost calculation for this solution is available in this
-[document](./docs/cost_calculation.md). This includes a breakdown of costs
+[document](./docs/cost_calculation.md) which includes a breakdown of costs
 per AWS service, assumptions made, and cost optimization recommendations.
 
 ## Authors
