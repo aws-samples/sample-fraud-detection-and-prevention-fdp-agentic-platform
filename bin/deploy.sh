@@ -7,7 +7,7 @@ export JQ_VERSION="1.7.1"
 export NODE_VERSION="22"
 export NVM_VERSION="0.40.2"
 export TF_VERSION="1.12.2"
-export TG_VERSION="0.81.10"
+export TG_VERSION="0.84.1"
 
 # aws --version > /dev/null 2>&1 || { wget -q https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip; unzip awscli-exe-linux-aarch64.zip; sudo ./aws/install; ln -s /usr/local/bin/aws ${WORKDIR}/bin/aws; }
 # jq --version > /dev/null 2>&1 || { wget -q https://github.com/jqlang/jq/releases/download/jq-${JQ_VERSION}/jq-linux-arm64; chmod 0755 jq-*; mv jq-* ${WORKDIR}/bin/jq; }
